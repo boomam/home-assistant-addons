@@ -9,6 +9,9 @@ The letter & number are bug fix releases where said issue is not with Traefik, b
 
 -----
 
+## Traefik 3.6.0
+* Updated Traefik from 3.5.4 to 3.6.0
+
 ## Traefik 3.5.4
 * Updated Traefik from 3.5.3 to 3.5.4
 
