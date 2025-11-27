@@ -26,7 +26,8 @@ jobs:
         with:
           args: |
             --test \
-            --all \
+#            --all \
+            --amd64 --aarch64 \
             --target /data/${ADD_ON_DIRECTORY} \
             --docker-hub boomam \
             --image ${ADD_ON_DIRECTORY}-add-on
