@@ -8,12 +8,15 @@ First three digits are Traefik's version number.
 The letter & number are bug fix releases where said issue is not with Traefik, but with this template.  
 
 -----
-## Traefik 3.6.1
+## Traefik 3.6.2.a
+* Updated base iamge from 18.2.1 to 19.0.0
+
 ## Traefik 3.6.2
 * Updated Traefik from 3.6.1 to 3.6.2
-
 * Updated base image from 18.1.3 to 18.2.1
 * Updated Traefik from 3.6.0 to 3.6.1
+
+## Traefik 3.6.1
 
 ## Traefik 3.6.0
 * Updated Traefik from 3.5.4 to 3.6.0
