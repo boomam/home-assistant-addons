@@ -45,7 +45,7 @@ RUN set -eux; \
     esac; \
     # Download Tailscale tarball and extract
     curl -L -s \
-        "https://pkgs.tailscale.com/stable/tailscale_${TAILSCALE_VERSION#v}_${ARCH}.tgz" \
+        "https://pkgs.tailscale.com/stable/tailscale_${TAILSCALE_VERSION}_${ARCH}.tgz" \
       | tar zxvf - -C /opt/ --strip-components 1; \
     # Remove systemd folder if exists
     rm -rf /opt/systemd
