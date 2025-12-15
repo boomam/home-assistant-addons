@@ -24,6 +24,7 @@ RUN set -eux; \
         iptables \
         nginx \
         coreutils \
+        networkmanager \
         curl; \
     echo "APK OK"; \
     # Check iptables binaries
