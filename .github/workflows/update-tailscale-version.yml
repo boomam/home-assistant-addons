@@ -1,4 +1,4 @@
-name: Update Traefik Version
+name: Update Tailscale Version
 
 on:
 #  schedule:
