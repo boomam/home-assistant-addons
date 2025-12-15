@@ -12,6 +12,10 @@ ARG BUILD_REF
 ARG BUILD_REPOSITORY
 ARG BUILD_VERSION
 
+# Make them available inside RUN commands
+ENV TAILSCALE_VERSION=${TAILSCALE_VERSION}
+ENV BUILD_ARCH=${BUILD_ARCH}
+
 # Set shell
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
