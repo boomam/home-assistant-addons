@@ -1,4 +1,4 @@
-# Unofficial Home Assistant Add-ons: Tailscale (TESTING)
+# Unofficial Home Assistant Add-ons: Tailscale
 
 Tailscale bundled as an Home Assistant add-on.
 
