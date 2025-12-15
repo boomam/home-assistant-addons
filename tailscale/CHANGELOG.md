@@ -11,3 +11,4 @@ The letter & number are bug fix releases where said issue is not with Tailscale,
 ## Tailscale Beta 1
 * Corrected startup scripts
 * Corrected nginx scripts
+* Corrected s6-overlay scripts
