@@ -1,0 +1,33 @@
+name: 'Build and test Tailscale'
+
+env:
+  ADD_ON_DIRECTORY: tailscale
+
+on:
+#  schedule:
+#    - cron: "0 4 * * 4"   # run every Thursday days.
+#  push:
+#    paths:
+#      - 'traefik/build.yaml'   # trigger only if this file changes
+#    branches:
+#      - master                 
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Test build Tailscale
+    runs-on: ubuntu-latest
+    steps:    
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+    
+      - name: Test build
+        uses: home-assistant/builder@master
+        with:
+          args: |
+            --test \
+            --amd64 \
+            --aarch64 \
+            --target /data/${ADD_ON_DIRECTORY} \
+            --docker-hub boomam \
+            --image ${ADD_ON_DIRECTORY}-add-on

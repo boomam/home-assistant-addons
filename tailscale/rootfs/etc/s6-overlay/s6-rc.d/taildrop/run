@@ -1,0 +1,12 @@
+#!/command/with-contenv bashio
+# shellcheck shell=bash
+# ==============================================================================
+# Home Assistant Community Add-on: Tailscale
+# Fetches files send via Taildrop
+# ==============================================================================
+
+# Ensure the directory exists
+mkdir -p /share/taildrop
+
+# Fetch files
+exec /opt/tailscale file get --verbose --loop "/share/taildrop"

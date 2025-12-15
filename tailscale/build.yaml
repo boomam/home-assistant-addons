@@ -1,0 +1,9 @@
+# https://github.com/hassio-addons/addon-base
+build_from:
+  aarch64: ghcr.io/hassio-addons/base/aarch64:19.0.0
+  amd64: ghcr.io/hassio-addons/base/amd64:19.0.0
+  armhf: ghcr.io/hassio-addons/base/armhf:19.0.0
+  armv7: ghcr.io/hassio-addons/base/armv7:19.0.0
+  i386: ghcr.io/hassio-addons/base/i386:19.0.0
+args:
+  TAILSCALE_VERSION: 3.6.4

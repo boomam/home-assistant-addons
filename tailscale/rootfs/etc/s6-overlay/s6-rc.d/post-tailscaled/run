@@ -1,0 +1,197 @@
+#!/command/with-contenv bashio
+# shellcheck shell=bash
+# ==============================================================================
+# Home Assistant Community Add-on: Tailscale
+# Runs after the machine has been logged in into the Tailscale network
+# ==============================================================================
+declare interface
+declare -a options
+declare -a routes=()
+declare route
+declare -a colliding_routes=()
+declare login_server
+declare tags
+declare keyexpiry
+
+# Default options
+options+=(--hostname "$(bashio::info.hostname)")
+
+# Accept magicDNS by default when not set, or when explicitly enabled
+if ! bashio::config.has_value "accept_dns" || \
+  bashio::config.true "accept_dns";
+then
+  options+=(--accept-dns)
+else
+  options+=(--accept-dns=false)
+fi
+
+# Accept routes by default when not set, or when explicitly enabled
+if ! bashio::config.has_value "accept_routes" || \
+  bashio::config.true "accept_routes";
+then
+  options+=(--accept-routes)
+else
+  options+=(--accept-routes=false)
+fi
+
+# Check exit node configuration
+if (! bashio::config.has_value "advertise_exit_node" || \
+  bashio::config.true "advertise_exit_node") && \
+  bashio::config.has_value "exit_node"
+then
+  bashio::exit.nok "You can't advertise this device as an exit node and at the same time specify an exit node to use"
+fi
+
+# Advertise as exit node by default when not set, or when explicitly enabled
+if ! bashio::config.has_value "advertise_exit_node" || \
+  bashio::config.true "advertise_exit_node";
+then
+  options+=(--advertise-exit-node)
+else
+  options+=(--advertise-exit-node=false)
+fi
+
+# Use exit node when explicitly defined
+if bashio::config.has_value "exit_node"; then
+  options+=(--exit-node="$(bashio::config "exit_node")")
+  # The exit-node-allow-lan-access=true is required to access the internal hassio and docker networks also, even when exit node is specified
+  options+=(--exit-node-allow-lan-access=true)
+else
+  options+=(--exit-node=)
+  options+=(--exit-node-allow-lan-access=false)
+fi
+
+# Advertise app connector by default when not set, or when explicitly enabled
+if ! bashio::config.has_value "advertise_connector" || \
+  bashio::config.true "advertise_connector";
+then
+  options+=(--advertise-connector)
+else
+  options+=(--advertise-connector=false)
+fi
+
+# Get configured control server
+if bashio::config.has_value "login_server";
+then
+  login_server=$(bashio::config "login_server")
+  options+=(--login-server="${login_server}")
+fi
+
+# Enable stateful filtering (it's disabled by default from v1.66.4)
+if ! bashio::config.has_value "stateful_filtering" || \
+  bashio::config.false "stateful_filtering";
+then
+  options+=(--stateful-filtering=false)
+else
+  options+=(--stateful-filtering)
+fi
+
+# Support advanced site-to-site networking, disable source addresses NAT
+if ! bashio::config.has_value "snat_subnet_routes" || \
+  bashio::config.true "snat_subnet_routes";
+then
+  options+=(--snat-subnet-routes)
+else
+  options+=(--snat-subnet-routes=false)
+fi
+
+# Get configured tags
+tags=$(bashio::config "tags//[] | join(\",\")" "")
+options+=(--advertise-tags="${tags}")
+
+# Advertise subnet routes
+readarray -t routes < <(subnet-routes advertised)
+IFS=","
+options+=(--advertise-routes="${routes[*]}")
+unset IFS
+
+# Wait for the network to be available and logged in
+while ! bashio::fs.socket_exists "/var/run/tailscale/tailscaled.sock" || \
+  ! /opt/tailscale status --json --peers=false --self=false \
+    | jq --exit-status '.BackendState == "Running" or .BackendState == "NeedsLogin" or .BackendState == "Stopped"' > /dev/null;
+do
+  sleep 2
+done
+
+# Start Tailscale
+if ! /opt/tailscale up "${options[@]}"; then
+  bashio::exit.nok "Unable to start up Tailscale"
+fi
+
+# Wait for the network to be available and logged in
+while ! /opt/tailscale status --json --peers=false --self=false \
+  | jq --exit-status '.BackendState == "Running"' > /dev/null
+do
+  sleep 2
+done
+
+bashio::log.info "Tailscale is running"
+
+# Linux optimizations for subnet routers and exit nodes
+# Based on: https://tailscale.com/kb/1320/performance-best-practices#linux-optimizations-for-subnet-routers-and-exit-nodes
+# Note: Changes made via ethtool are not persistent and will be lost after the machine shuts down
+if interface=$( \
+  curl -sf --unix-socket /var/run/tailscale/tailscaled.sock http://local-tailscaled.sock/localapi/v0/check-udp-gro-forwarding \
+  | jq -rc '.Warning' \
+  | sed -nr 's/^UDP GRO forwarding is suboptimally configured on (\S+),.*$/\1/p') \
+  && bashio::var.has_value "${interface}";
+then
+  bashio::log.info "Enabling UDP GRO for forwarding on ${interface}"
+  if ! ethtool -K "${interface}" rx-udp-gro-forwarding on rx-gro-list off; then
+    bashio::log.warning "Enabling UDP GRO failed"
+  fi
+fi
+
+# Delete previously created persistent tailscale serve configuration ONCE
+# After the add-on's share-homeassistant (serve and funnel) service is a longrun service, we do not modify the serve state permanently
+# This step can be removed in a later version with the file in the data folder also
+if ! bashio::fs.file_exists "/data/final_serve_reset_is_done"; then
+  if ! /opt/tailscale serve reset; then
+    bashio::exit.nok "Unable to remove previous Tailscale Serve and Funnel settings"
+  fi
+  touch "/data/final_serve_reset_is_done"
+fi
+
+# Warn about key expiration
+if keyexpiry=$(/opt/tailscale status --self=true --peers=false --json | jq -rce '.Self.KeyExpiry'); then
+  bashio::log.warning "The connection's key will expire on: ${keyexpiry}"
+  bashio::log.warning "Consider disabling key expiry to avoid losing connection to your Home Assistant device."
+  bashio::log.warning "Please check your configuration based on the add-on's documentation under \"Configuration\""
+fi
+
+# Warn about colliding subnet routes if non-userspace networking and accepting routes are enabled
+if bashio::config.false "userspace_networking" && \
+  (! bashio::config.has_value "accept_routes" || \
+    bashio::config.true "accept_routes");
+then
+  readarray -t colliding_routes < <( \
+    comm -1 -2 \
+      <(subnet-routes local) \
+      <(/opt/tailscale status --json --peers=true --self=false \
+        | jq -rc '.Peer[] | select(has("PrimaryRoutes")) | .PrimaryRoutes[]' \
+        | sort -u))
+  if (( 0 < ${#colliding_routes[@]} )); then
+    bashio::log.warning \
+      "Currently the following subnets are both present as local subnets" \
+      "and are also routed within your tailnet to other nodes!"
+    bashio::log.warning \
+      "Please reconfigure your subnet routing within your tailnet" \
+      "to prevent current or future collisions."
+  fi
+  for route in "${colliding_routes[@]}"; do
+    bashio::log.warning "  ${route}"
+  done
+fi
+
+# Notify about userspace networking
+if ! bashio::config.has_value "userspace_networking" || \
+  bashio::config.true "userspace_networking";
+then
+  bashio::log.notice \
+    "The add-on uses userspace networking mode."
+  bashio::log.notice \
+    "If you need to access other clients on your tailnet from your Home Assistant instance," \
+    "disable userspace networking mode, that will create a \"tailscale0\" network interface on your host."
+  bashio::log.notice \
+    "Please check your configuration based on the add-on's documentation under \"Option: userspace_networking\""
+fi
