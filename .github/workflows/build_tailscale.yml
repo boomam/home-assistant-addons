@@ -30,5 +30,4 @@ jobs:
             --aarch64 \
             --target /data/${ADD_ON_DIRECTORY} \
             --docker-hub boomam \
-            --image ${ADD_ON_DIRECTORY}-add-on \
-            --build-arg TAILSCALE_VERSION=1.92.2            
+            --image ${ADD_ON_DIRECTORY}-add-on
