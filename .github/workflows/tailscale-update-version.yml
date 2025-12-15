@@ -6,30 +6,30 @@ on:
   workflow_dispatch:
 
 jobs:
-  update-traefik:
+  update-tailscale-version:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Get latest Traefik release
-        id: traefik
+      - name: Get latest Tailscale release
+        id: tailscale
         run: |
-          latest=$(curl -s https://api.github.com/repos/traefik/traefik/releases/latest | jq -r .tag_name)
+          latest=$(curl -s https://api.github.com/repos/tailscale/tailscale/releases/latest | jq -r .tag_name)
           latest=${latest#v}
           echo "latest=$latest" >> $GITHUB_OUTPUT
 
       - name: Get current version
         id: current
         run: |
-          current=$(grep "TRAEFIK_VERSION:" traefik/build.yaml | awk '{print $2}')
+          current=$(grep "TAILSCALE_VERSION:" tailscale/build.yaml | awk '{print $2}')
           echo "current=$current" >> $GITHUB_OUTPUT
 
       - name: Check if update is needed
         id: check
         run: |
-          if [ "${{ steps.traefik.outputs.latest }}" = "${{ steps.current.outputs.current }}" ]; then
+          if [ "${{ steps.tailscale.outputs.latest }}" = "${{ steps.current.outputs.current }}" ]; then
             echo "update=false" >> $GITHUB_OUTPUT
           else
             echo "update=true" >> $GITHUB_OUTPUT
@@ -38,31 +38,30 @@ jobs:
       - name: Update build.yaml
         if: steps.check.outputs.update == 'true'
         run: |
-          sed -i "s/^  TRAEFIK_VERSION:.*/  TRAEFIK_VERSION: ${{ steps.traefik.outputs.latest }}/" traefik/build.yaml
-
+          sed -i "s/^  TAILSCALE_VERSION:.*/  TAILSCALE_VERSION: ${{ steps.tailscale.outputs.latest }}/" tailscale/build.yaml
       - name: Update CHANGELOG.md
         if: steps.check.outputs.update == 'true'
         run: |
           old_version=${{ steps.current.outputs.current }}
-          new_version=${{ steps.traefik.outputs.latest }}
+          new_version=${{ steps.tailscale.outputs.latest }}
           echo "Updating changelog from $old_version to $new_version"
-          sed -i "11a ## Traefik $new_version\n* Updated Traefik from $old_version to $new_version\n" traefik/CHANGELOG.md
+          sed -i "11a ## Tailscale $new_version\n* Updated Tailscale from $old_version to $new_version\n" tailscale/CHANGELOG.md
 
       - name: Update config.yaml
         if: steps.check.outputs.update == 'true'
         run: |
-          new_version=${{ steps.traefik.outputs.latest }}
-          sed -i "3c\version: $new_version" traefik/config.yaml
+          new_version=${{ steps.tailscale.outputs.latest }}
+          sed -i "3c\version: $new_version" tailscale/config.yaml
 
       - name: Commit changes
         if: steps.check.outputs.update == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add traefik/build.yaml traefik/CHANGELOG.md traefik/config.yaml
-          git commit -m "Update Traefik to ${{ steps.traefik.outputs.latest }}"
+          git add tailscale/build.yaml tailscale/CHANGELOG.md tailscale/config.yaml
+          git commit -m "Update Tailscale to ${{ steps.tailscale.outputs.latest }}"
           git push
 
       - name: No update needed
         if: steps.check.outputs.update == 'false'
-        run: echo "✅ Traefik is already up to date (version ${{ steps.current.outputs.current }})"
+        run: echo "✅ Tailscale is already up to date (version ${{ steps.current.outputs.current }})"
