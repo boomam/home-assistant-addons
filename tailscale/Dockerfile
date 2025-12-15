@@ -1,6 +1,6 @@
-# Default base if BUILD_FROM not set
-ARG BUILD_FROM=ghcr.io/hassio-addons/base/amd64:19.0.0
-FROM ${BUILD_FROM}
+# Use dynamic build base
+ARG BUILD_FROM
+FROM $BUILD_FROM
 
 # Build arguments
 ARG BUILD_ARCH
@@ -35,18 +35,19 @@ RUN set -eux; \
         ln -sf /sbin/xtables-nft-multi /sbin/ip6tables; \
         ln -sf /sbin/xtables-nft-multi /sbin/iptables; \
     fi; \
-    # Map BUILD_ARCH to Tailscale download arch
+    # Map BUILD_ARCH to Tailscale download architecture
     case "${BUILD_ARCH}" in \
         amd64) ARCH=amd64 ;; \
         aarch64) ARCH=arm64 ;; \
         armv7) ARCH=arm ;; \
         i386) ARCH=386 ;; \
-        *) echo "Unknown arch: ${BUILD_ARCH}" && exit 1 ;; \
+        *) echo "Unknown BUILD_ARCH: ${BUILD_ARCH}" && exit 1 ;; \
     esac; \
-    # Download Tailscale tarball and extract
-    curl -L -s \
-        "https://pkgs.tailscale.com/stable/tailscale_${TAILSCALE_VERSION}_${ARCH}.tgz" \
-      | tar zxvf - -C /opt/ --strip-components 1; \
+    # Debug: show URL being downloaded
+    echo "Downloading Tailscale: https://pkgs.tailscale.com/stable/tailscale_${TAILSCALE_VERSION}_${ARCH}.tgz"; \
+    # Download Tailscale tarball safely
+    curl -fSL "https://pkgs.tailscale.com/stable/tailscale_${TAILSCALE_VERSION}_${ARCH}.tgz" \
+        | tar zxvf - -C /opt/ --strip-components 1; \
     # Remove systemd folder if exists
     rm -rf /opt/systemd
 
@@ -71,6 +72,6 @@ LABEL \
     org.opencontainers.image.url="https://github.com/boomam/home-assistant-addons" \
     org.opencontainers.image.source="https://github.com/boomam/home-assistant-addons" \
     org.opencontainers.image.documentation="https://github.com/boomam/home-assistant-addons/blob/master/tailscale/README.md" \
-    org.opencontainers.image.created=${BUILD_DATE} \
-    org.opencontainers.image.revision=${BUILD_REF} \
-    org.opencontainers.image.version=${BUILD_VERSION}
+    org.opencontainers.image.created="${BUILD_DATE}" \
+    org.opencontainers.image.revision="${BUILD_REF}" \
+    org.opencontainers.image.version="${BUILD_VERSION}"
