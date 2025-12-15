@@ -1,14 +1,22 @@
-ARG BUILD_FROM=ghcr.io/hassio-addons/base/amd64:latest
+# Default base if BUILD_FROM not set
+ARG BUILD_FROM=ghcr.io/hassio-addons/base/amd64:19.0.0
 FROM ${BUILD_FROM}
 
+# Build arguments
 ARG BUILD_ARCH
 ARG TAILSCALE_VERSION
+ARG BUILD_DATE
+ARG BUILD_DESCRIPTION
+ARG BUILD_NAME
+ARG BUILD_REF
+ARG BUILD_REPOSITORY
+ARG BUILD_VERSION
 
 # Set shell
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-# Setup base
-RUN \
+# Setup base and install dependencies
+RUN set -eux; \
     apk add --no-cache \
         ethtool \
         ipcalc \
@@ -17,45 +25,37 @@ RUN \
         nginx \
         coreutils \
         networkmanager \
-        curl \
-    && echo "APK OK" \
-    && ls -l /sbin || true \
-    && ls -l /usr/sbin || true \
-    && which iptables || true \
-    && which ip6tables || true        
-    \
-    && ln -sf /sbin/xtables-nft-multi /sbin/ip6tables \
-    && ln -sf /sbin/xtables-nft-multi /sbin/iptables \
-    \
-    && if [ "${BUILD_ARCH}" = "aarch64" ]; then ARCH="arm64"; fi \
-    && if [ "${BUILD_ARCH}" = "armv7" ]; then ARCH="arm"; fi \
-    && if [ "${BUILD_ARCH}" = "amd64" ]; then ARCH="amd64"; fi \
-    \
-    && curl -L -s \
+        curl; \
+    echo "APK OK"; \
+    ls -l /sbin || true; \
+    ls -l /usr/sbin || true; \
+    which iptables || true; \
+    which ip6tables || true; \
+    if [ -x /sbin/xtables-nft-multi ]; then \
+        ln -sf /sbin/xtables-nft-multi /sbin/ip6tables; \
+        ln -sf /sbin/xtables-nft-multi /sbin/iptables; \
+    fi; \
+    case "${BUILD_ARCH}" in \
+        aarch64) ARCH=arm64 ;; \
+        armv7)   ARCH=arm ;; \
+        amd64)   ARCH=amd64 ;; \
+        *) echo "Unknown arch: ${BUILD_ARCH}" && exit 1 ;; \
+    esac; \
+    curl -L -s \
         "https://pkgs.tailscale.com/stable/tailscale_${TAILSCALE_VERSION#v}_${ARCH}.tgz" \
-        | tar zxvf - -C /opt/ --strip-components 1 \
-    \
-    && rm -f -r \
-        /opt/systemd
+      | tar zxvf - -C /opt/ --strip-components 1; \
+    rm -rf /opt/systemd
 
 # Copy root filesystem
 COPY rootfs /
 
-HEALTHCHECK \
-    CMD healthcheck
+# Healthcheck
+HEALTHCHECK CMD healthcheck
 
 # S6 Overlay stage 2 hook
 ENV S6_STAGE2_HOOK=/etc/s6-overlay/scripts/stage2_hook.sh
 
-# Build arguments
-ARG BUILD_ARCH
-ARG BUILD_DATE
-ARG BUILD_DESCRIPTION
-ARG BUILD_NAME
-ARG BUILD_REF
-ARG BUILD_REPOSITORY
-ARG BUILD_VERSION
-
+# Labels
 LABEL \
     io.hass.name="Tailscale for ${BUILD_ARCH}" \
     io.hass.description="Home Assistant Unofficial Add-on: ${BUILD_ARCH} Tailscale image" \
