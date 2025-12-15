@@ -15,7 +15,7 @@ ARG BUILD_VERSION
 # Set shell
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-# Setup base and install dependencies
+# Install dependencies and Tailscale
 RUN set -eux; \
     apk add --no-cache \
         ethtool \
@@ -24,26 +24,29 @@ RUN set -eux; \
         iptables \
         nginx \
         coreutils \
-        networkmanager \
         curl; \
     echo "APK OK"; \
-    ls -l /sbin || true; \
-    ls -l /usr/sbin || true; \
+    # Check iptables binaries
     which iptables || true; \
     which ip6tables || true; \
+    # Create symlinks if xtables-nft-multi exists
     if [ -x /sbin/xtables-nft-multi ]; then \
         ln -sf /sbin/xtables-nft-multi /sbin/ip6tables; \
         ln -sf /sbin/xtables-nft-multi /sbin/iptables; \
     fi; \
+    # Map BUILD_ARCH to Tailscale download arch
     case "${BUILD_ARCH}" in \
+        amd64) ARCH=amd64 ;; \
         aarch64) ARCH=arm64 ;; \
-        armv7)   ARCH=arm ;; \
-        amd64)   ARCH=amd64 ;; \
+        armv7) ARCH=arm ;; \
+        i386) ARCH=386 ;; \
         *) echo "Unknown arch: ${BUILD_ARCH}" && exit 1 ;; \
     esac; \
+    # Download Tailscale tarball and extract
     curl -L -s \
         "https://pkgs.tailscale.com/stable/tailscale_${TAILSCALE_VERSION#v}_${ARCH}.tgz" \
       | tar zxvf - -C /opt/ --strip-components 1; \
+    # Remove systemd folder if exists
     rm -rf /opt/systemd
 
 # Copy root filesystem
@@ -61,12 +64,4 @@ LABEL \
     io.hass.description="Home Assistant Unofficial Add-on: ${BUILD_ARCH} Tailscale image" \
     maintainer="BoomAM" \
     org.opencontainers.image.title="Tailscale for ${BUILD_ARCH}" \
-    org.opencontainers.image.description="Home Assistant Unofficial Add-on: ${BUILD_ARCH} Tailscale image" \
-    org.opencontainers.image.vendor="BoomAM" \
-    org.opencontainers.image.authors="BoomAM" \
-    org.opencontainers.image.url="https://github.com/boomam/home-assistant-addons" \
-    org.opencontainers.image.source="https://github.com/boomam/home-assistant-addons" \
-    org.opencontainers.image.documentation="https://github.com/boomam/home-assistant-addons/blob/master/tailscale/README.md" \
-    org.opencontainers.image.created=${BUILD_DATE} \
-    org.opencontainers.image.revision=${BUILD_REF} \
-    org.opencontainers.image.version=${BUILD_VERSION}
+    org.opencontainers.i
