@@ -46,15 +46,14 @@ RUN set -eux; \
 # Copy root filesystem
 COPY rootfs /
 
-# Make the stage2_hook executable
-#RUN chmod +x /etc/s6-overlay/scripts/*.sh
+# Make everything in /command executable
+RUN chmod -R +x /command
 
-# Make s6-overlay scripts and commands executable
+# Optional: also ensure s6 overlay scripts are executable
 RUN find /etc/s6-overlay/scripts /etc/s6-overlay/s6-rc.d -type f -name "*.sh" -exec chmod +x {} \; \
     && find /etc/s6-overlay/s6-rc.d -type f -name "run" -exec chmod +x {} \; \
-    && find /etc/s6-overlay/s6-rc.d -type f -name "finish" -exec chmod +x {} \; \
-    && chmod +x /command/subnet-routes
-
+    && find /etc/s6-overlay/s6-rc.d -type f -name "finish" -exec chmod +x {} \;
+    
 # Healthcheck
 HEALTHCHECK CMD healthcheck
 
