@@ -16,7 +16,7 @@ RUN \
         iptables \
         nginx \
         coreutils \
-        networkmanager \
+#        networkmanager \
     \
     && ln -sf /sbin/xtables-nft-multi /sbin/ip6tables \
     && ln -sf /sbin/xtables-nft-multi /sbin/iptables \
