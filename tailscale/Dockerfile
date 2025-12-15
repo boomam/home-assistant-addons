@@ -31,14 +31,6 @@ RUN set -eux; \
         networkmanager \
         curl; \
     echo "APK OK"; \
-    # Check iptables binaries
-    which iptables || true; \
-    which ip6tables || true; \
-    # Create symlinks if xtables-nft-multi exists
-    if [ -x /sbin/xtables-nft-multi ]; then \
-        ln -sf /sbin/xtables-nft-multi /sbin/ip6tables; \
-        ln -sf /sbin/xtables-nft-multi /sbin/iptables; \
-    fi; \
     # Map BUILD_ARCH to Tailscale download architecture
     case "${BUILD_ARCH}" in \
         amd64) ARCH=amd64 ;; \
@@ -47,13 +39,9 @@ RUN set -eux; \
         i386) ARCH=386 ;; \
         *) echo "Unknown BUILD_ARCH: ${BUILD_ARCH}" && exit 1 ;; \
     esac; \
-    # Debug: show URL being downloaded
-    echo "Downloading Tailscale: https://pkgs.tailscale.com/stable/tailscale_${TAILSCALE_VERSION}_${ARCH}.tgz"; \
     # Download Tailscale tarball safely
     curl -fSL "https://pkgs.tailscale.com/stable/tailscale_${TAILSCALE_VERSION}_${ARCH}.tgz" \
-        | tar zxvf - -C /opt/ --strip-components 1; \
-    # Remove systemd folder if exists
-    rm -rf /opt/systemd
+        | tar zxvf - -C /opt/ --strip-components 1
 
 # Copy root filesystem
 COPY rootfs /
