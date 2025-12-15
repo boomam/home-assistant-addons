@@ -65,4 +65,12 @@ LABEL \
     io.hass.description="Home Assistant Unofficial Add-on: ${BUILD_ARCH} Tailscale image" \
     maintainer="BoomAM" \
     org.opencontainers.image.title="Tailscale for ${BUILD_ARCH}" \
-    org.opencontainers.i
+    org.opencontainers.image.description="Home Assistant Unofficial Add-on: ${BUILD_ARCH} Tailscale image" \
+    org.opencontainers.image.vendor="BoomAM" \
+    org.opencontainers.image.authors="BoomAM" \
+    org.opencontainers.image.url="https://github.com/boomam/home-assistant-addons" \
+    org.opencontainers.image.source="https://github.com/boomam/home-assistant-addons" \
+    org.opencontainers.image.documentation="https://github.com/boomam/home-assistant-addons/blob/master/tailscale/README.md" \
+    org.opencontainers.image.created=${BUILD_DATE} \
+    org.opencontainers.image.revision=${BUILD_REF} \
+    org.opencontainers.image.version=${BUILD_VERSION}
