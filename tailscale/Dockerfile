@@ -1,6 +1,5 @@
-ARG BUILD_FROM
-
-FROM $BUILD_FROM
+ARG BUILD_FROM=ghcr.io/hassio-addons/base/amd64:latest
+FROM ${BUILD_FROM}
 
 ARG BUILD_ARCH
 ARG TAILSCALE_VERSION
@@ -9,8 +8,6 @@ ARG TAILSCALE_VERSION
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Setup base
-ARG BUILD_ARCH=${BUILD_ARCH}
-ARG TAILSCALE_VERSION=${TAILSCALE_VERSION}
 RUN \
     apk add --no-cache \
         ethtool=6.14.1-r0 \
