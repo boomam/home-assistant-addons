@@ -16,8 +16,13 @@ RUN \
         iptables \
         nginx \
         coreutils \
-#        networkmanager \
+        networkmanager \
         curl \
+    && echo "APK OK" \
+    && ls -l /sbin || true \
+    && ls -l /usr/sbin || true \
+    && which iptables || true \
+    && which ip6tables || true        
     \
     && ln -sf /sbin/xtables-nft-multi /sbin/ip6tables \
     && ln -sf /sbin/xtables-nft-multi /sbin/iptables \
