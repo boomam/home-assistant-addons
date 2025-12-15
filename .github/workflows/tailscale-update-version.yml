@@ -38,20 +38,21 @@ jobs:
       - name: Update build.yaml
         if: steps.check.outputs.update == 'true'
         run: |
-          sed -i "s/^  TAILSCALE_VERSION:.*/  TAILSCALE_VERSION: ${{ steps.tailscale.outputs.latest }}/" tailscale/build.yaml
+          sed -i "s/^  TAILSCALE_VERSION:.*/  TAILSCALE_VERSION: ${{ steps.tailscale.outputs.latest }}/" tailscale/build-test.yaml
+          
       - name: Update CHANGELOG.md
         if: steps.check.outputs.update == 'true'
         run: |
           old_version=${{ steps.current.outputs.current }}
           new_version=${{ steps.tailscale.outputs.latest }}
           echo "Updating changelog from $old_version to $new_version"
-          sed -i "11a ## Tailscale $new_version\n* Updated Tailscale from $old_version to $new_version\n" tailscale/CHANGELOG.md
+          sed -i "11a ## Tailscale $new_version\n* Updated Tailscale from $old_version to $new_version\n" tailscale/CHANGELOG-test.md
 
       - name: Update config.yaml
         if: steps.check.outputs.update == 'true'
         run: |
           new_version=${{ steps.tailscale.outputs.latest }}
-          sed -i "3c\version: $new_version" tailscale/config.yaml
+          sed -i "3c\version: $new_version" tailscale/config-test.yaml
 
       - name: Commit changes
         if: steps.check.outputs.update == 'true'
