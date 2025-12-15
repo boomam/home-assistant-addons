@@ -46,6 +46,9 @@ RUN set -eux; \
 # Copy root filesystem
 COPY rootfs /
 
+# Make the stage2_hook executable
+RUN chmod +x /etc/s6-overlay/scripts/*.sh
+
 # Healthcheck
 HEALTHCHECK CMD healthcheck
 
