@@ -1,6 +1,6 @@
 # Use dynamic build base
-ARG BUILD_FROM
-FROM $BUILD_FROM
+ARG BUILD_FROM=alpine:3.23
+FROM ${BUILD_FROM}
 
 # Build arguments
 ARG BUILD_ARCH
