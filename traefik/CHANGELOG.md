@@ -1,17 +1,18 @@
-# Change Log
-## Updates
+# Updates
 Traefik version should automatically update through a GitHub Action.
 Base Image will be a manual process for the time being.
 
-## Versioning
+# Versioning
 First three digits are Traefik's version number.  
 The letter & number are bug fix releases where said issue is not with Traefik, but with this template.  
 
+# Change Log
 -----
-## Traefik 3.6.4
+
 ## Traefik 3.6.5
 * Updated Traefik from 3.6.4 to 3.6.5
 
+## Traefik 3.6.4
 * Updated Traefik from 3.6.2 to 3.6.4
 * Updated base iamge from 18.2.1 to 19.0.0
 
