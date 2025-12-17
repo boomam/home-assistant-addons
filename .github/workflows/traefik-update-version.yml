@@ -45,12 +45,20 @@ jobs:
         run: |
           old_version=${{ steps.current.outputs.current }}
           new_version=${{ steps.traefik.outputs.latest }}
-      
-          sed -i "/^# Change Log$/a\\
-      \\
-      ## Traefik $new_version\\
-      * Updated Traefik from $old_version to $new_version\\
-      " traefik/CHANGELOG.md
+
+          awk -v old="$old_version" -v new="$new_version" '
+          /^# Change Log$/ {
+            print
+            print ""
+            print "## Traefik " new
+            print "* Updated Traefik from " old " to " new
+            print ""
+            next
+          }
+          { print }
+          ' traefik/CHANGELOG.md > traefik/CHANGELOG.tmp
+
+          mv traefik/CHANGELOG.tmp traefik/CHANGELOG.md
 
 #      - name: Update CHANGELOG.md
 #        if: steps.check.outputs.update == 'true'
