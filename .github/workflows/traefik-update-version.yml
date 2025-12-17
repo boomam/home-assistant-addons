@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  update-traefik:
+  traefik-update-version:
     runs-on: ubuntu-latest
 
     steps:
@@ -39,14 +39,26 @@ jobs:
         if: steps.check.outputs.update == 'true'
         run: |
           sed -i "s/^  TRAEFIK_VERSION:.*/  TRAEFIK_VERSION: ${{ steps.traefik.outputs.latest }}/" traefik/build.yaml
-
+      
       - name: Update CHANGELOG.md
         if: steps.check.outputs.update == 'true'
         run: |
           old_version=${{ steps.current.outputs.current }}
           new_version=${{ steps.traefik.outputs.latest }}
-          echo "Updating changelog from $old_version to $new_version"
-          sed -i "11a ## Traefik $new_version\n* Updated Traefik from $old_version to $new_version\n" traefik/CHANGELOG.md
+      
+          sed -i "/^# Change Log$/a\\
+      \\
+      ## Traefik $new_version\\
+      * Updated Traefik from $old_version to $new_version\\
+      " traefik/CHANGELOG.md
+
+#      - name: Update CHANGELOG.md
+#        if: steps.check.outputs.update == 'true'
+#        run: |
+#          old_version=${{ steps.current.outputs.current }}
+#          new_version=${{ steps.traefik.outputs.latest }}
+#          echo "Updating changelog from $old_version to $new_version"
+#          sed -i "11a ## Traefik $new_version\n* Updated Traefik from $old_version to $new_version\n" traefik/CHANGELOG.md
 
       - name: Update config.yaml
         if: steps.check.outputs.update == 'true'
