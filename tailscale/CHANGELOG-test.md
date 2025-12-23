@@ -8,7 +8,7 @@ First three digits are Tailscale's version number.
 The letter & number are bug fix releases where said issue is not with Tailscale, but with this template.  
 
 -----
-# Tailscale v1.92.1
+# Tailscale v1.92.1 OLD
 ## Tailscale 1.92.3
 * Updated Tailscale from 1.92.1 to 1.92.3
 
