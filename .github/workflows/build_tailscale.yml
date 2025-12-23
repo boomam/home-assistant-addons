@@ -4,8 +4,8 @@ env:
   ADD_ON_DIRECTORY: tailscale
 
 on:
-#  schedule:
-#    - cron: "0 4 * * 4"   # run every Thursday days.
+  schedule:
+    - cron: "0 4 * * 4"   # run every Thursday days.
 #  push:
 #    paths:
 #      - 'traefik/build.yaml'   # trigger only if this file changes
