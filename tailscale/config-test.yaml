@@ -1,6 +1,6 @@
 # This file defines how things are displayed in HA, options that show, etc.
 ---
-name: Tailscale
+version: 1.92.3
 version: 1.92.1
 slug: tailscale
 description: Zero config VPN for building secure networks
