@@ -1,8 +1,8 @@
 name: Update Tailscale Version
 
 on:
-#  schedule:
-#    - cron: "0 4 * * 3"   # run every Wednesday
+  schedule:
+    - cron: "0 4 * * 3"   # run every Wednesday
   workflow_dispatch:
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
       - name: Get current version
         id: current
         run: |
-          current=$(grep "TAILSCALE_VERSION:" tailscale/build-test.yaml | awk '{print $2}')
+          current=$(grep "TAILSCALE_VERSION:" tailscale/build.yaml | awk '{print $2}')
           echo "current=$current" >> $GITHUB_OUTPUT
 
       - name: Check if update is needed
@@ -38,7 +38,7 @@ jobs:
       - name: Update build.yaml
         if: steps.check.outputs.update == 'true'
         run: |
-          sed -i "s/^  TAILSCALE_VERSION:.*/  TAILSCALE_VERSION: ${{ steps.tailscale.outputs.latest }}/" tailscale/build-test.yaml
+          sed -i "s/^  TAILSCALE_VERSION:.*/  TAILSCALE_VERSION: ${{ steps.tailscale.outputs.latest }}/" tailscale/build.yaml
           
       - name: Update CHANGELOG.md
         if: steps.check.outputs.update == 'true'
@@ -46,20 +46,20 @@ jobs:
           old_version=${{ steps.current.outputs.current }}
           new_version=${{ steps.tailscale.outputs.latest }}
           echo "Updating changelog from $old_version to $new_version"
-          sed -i "11a ## Tailscale $new_version\n* Updated Tailscale from $old_version to $new_version\n" tailscale/CHANGELOG-test.md
+          sed -i "11a ## Tailscale $new_version\n* Updated Tailscale from $old_version to $new_version\n" tailscale/CHANGELOG.md
 
       - name: Update config.yaml
         if: steps.check.outputs.update == 'true'
         run: |
           new_version=${{ steps.tailscale.outputs.latest }}
-          sed -i "3c\version: $new_version" tailscale/config-test.yaml
+          sed -i "3c\version: $new_version" tailscale/config.yaml
 
       - name: Commit changes
         if: steps.check.outputs.update == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tailscale/build-test.yaml tailscale/CHANGELOG-test.md tailscale/config-test.yaml
+          git add tailscale/build.yaml tailscale/CHANGELOG.md tailscale/config.yaml
           git commit -m "Update Tailscale to ${{ steps.tailscale.outputs.latest }}"
           git push
 
