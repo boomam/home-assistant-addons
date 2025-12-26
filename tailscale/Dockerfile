@@ -49,6 +49,9 @@ COPY rootfs /
 # Make everything in /command executable
 RUN chmod -R +x /command
 
+# Make everything in /usr/bin executable
+RUN chmod -R +x /usr/bin
+
 # Optional: also ensure s6 overlay scripts are executable
 RUN find /etc/s6-overlay/scripts /etc/s6-overlay/s6-rc.d -type f -name "*.sh" -exec chmod +x {} \; \
     && find /etc/s6-overlay/s6-rc.d -type f -name "run" -exec chmod +x {} \; \
