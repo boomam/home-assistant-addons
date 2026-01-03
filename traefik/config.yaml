@@ -54,6 +54,8 @@ schema:
   access_logs: bool
   forwarded_headers_insecure: bool
   insecure_skip_verify: bool
+  proxy_protocol_trusted_ips:
+    - str?
   dynamic_configuration_path: str
   letsencrypt:
     enabled: bool

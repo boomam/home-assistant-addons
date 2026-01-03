@@ -21,6 +21,13 @@ entryPoints:
     forwardedHeaders:
       insecure: {{ $options.forwarded_headers_insecure }}
 {{- end }}
+{{- if and (has $options "proxy_protocol_trusted_ips") (gt (len $options.proxy_protocol_trusted_ips) 0) }}
+    proxyProtocol:
+      trustedIPs:
+      {{- range $options.proxy_protocol_trusted_ips }}
+        - "{{ . }}"
+      {{- end }}
+{{- end }}
 
 api:
   dashboard: true
