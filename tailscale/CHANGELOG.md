@@ -9,6 +9,9 @@ The letter & number are bug fix releases where said issue is not with Tailscale,
 
 -----
 # Tailscale
+## Tailscale 1.92.5
+* Updated Tailscale from 1.92.3 to 1.92.5
+
 
 ## Tailscale 1.92.3.a
 * Fixed docker health check
