@@ -6,4 +6,4 @@ build_from:
   armv7: ghcr.io/hassio-addons/base/armv7:19.0.0
   i386: ghcr.io/hassio-addons/base/i386:19.0.0
 args:
-  TRAEFIK_VERSION: 3.6.7
+  TRAEFIK_VERSION: 3.6.8
