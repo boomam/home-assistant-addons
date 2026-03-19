@@ -1,6 +1,6 @@
 # This file defines how things are displayed in HA, options that show, etc.
 name: Traefik
-version: 3.6.10
+version: 3.6.11
 slug: traefik
 description: |
   Traefik is a modern HTTP reverse proxy and load balancer that makes deploying microservices easy. 
@@ -14,7 +14,7 @@ startup: system
 init: false
 stage: stable
 boot: auto
-url: https://github.com/boomam/home-assistant-addons/tree/master/traefik
+url: https://github.com/ms5/home-assistant-addons/tree/custom_traefik_config_dev/traefik
 ports:
   80/tcp: 80
   443/tcp: 443
@@ -48,6 +48,9 @@ options:
     challenge_type: dnsChallenge
     provider: cloudflare
     delayBeforeCheck: 10
+  custom_config:
+    use_config_file: false
+    config_file: "/config/traefik/traefik.yaml"
   env_vars: []
 schema:
   log_level: list(TRACE|DEBUG|INFO|WARN|ERROR|FATAL|PANIC)
@@ -65,5 +68,8 @@ schema:
     delayBeforeCheck: int?
     resolvers:
       - str?
+  custom_config:
+    use_config_file: bool
+    config_file: str
   env_vars:
     - str

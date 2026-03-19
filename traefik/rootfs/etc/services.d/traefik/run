@@ -9,9 +9,35 @@ else
 fi
 
 bashio::log.info "Starting Traefik..."
-if [ -z "$ENV_VARS" ]; then
+
+if bashio::config.true 'custom_config.use_config_file'; then
+  bashio::log.info "Custom Config is enabled"
+
+  if bashio::config.is_empty 'custom_config.config_file'; then
+    bashio::log.error "Custom config is configured for config file, but 'config_file' is not provided or empty."
+    exit 1
+  fi
+
+  CONFIG_FILE=$(bashio::config 'custom_config.config_file')
+
+  if ! bashio::fs.file_exists "${CONFIG_FILE}"; then
+    bashio::log.error "Custom config is enabled with file ${CONFIG_FILE} but the file was not found!"
+    exit 1
+  fi
+
+  bashio::log.info "Running Traefik with config file: ${CONFIG_FILE}"
+  if [ -z "$ENV_VARS" ]; then
     bashio::log.info "Running Traefik without env_vars"
-    exec /usr/local/bin/traefik
+    exec /usr/local/bin/traefik --configFile="${CONFIG_FILE}"
+  else
+    env $ENV_VARS /usr/local/bin/traefik --configFile="${CONFIG_FILE}"
+  fi
+
 else
-    env $ENV_VARS /usr/local/bin/traefik
+  if [ -z "$ENV_VARS" ]; then
+      bashio::log.info "Running Traefik without env_vars"
+      exec /usr/local/bin/traefik
+  else
+      env $ENV_VARS /usr/local/bin/traefik
+  fi
 fi

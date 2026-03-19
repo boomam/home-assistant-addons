@@ -126,6 +126,18 @@ You will also have to set the Let's Encrypt e-mail and challange type. Otherwise
 | provider | The list of providers can be found in the [Let's Encrypt provider section](https://docs.traefik.io/https/acme/#providers) of the Traefik documentation. | `provider: cloudflare` |
 | delayBeforeCheck | By default, the provider will verify the TXT DNS challenge record before letting ACME verify.  If `delayBeforeCheck` is set and greater than zero, this check is delayed for the configured duration in seconds. | `delayBeforeCheck: 10` |
 
+### Option `custom_config`
+
+This option allows expert users to completely bypass the standard built-in add-on configuration (such as Let's Encrypt, Log Level, etc.) and run Traefik with their own static configuration. 
+
+> **⚠️ WARNING:** When the toggle inside `custom_config` is enabled, ALL standard configuration options above it in the configuration UI will be ignored.
+
+#### Custom Config Options
+| What | Info needed | Example |
+| ----- | ----- | ----- |
+| use_config_file | Toggle to enable running Traefik with a static configuration file. | `use_config_file: true` |
+| config_file | The absolute path to your static configuration file inside the Home Assistant container when `use_config_file` is enabled. | `config_file: "/config/traefik/traefik.yaml"` |
+
 ### Option `env_vars`
 
 Optional environment variables that can be added. These additional configuration values can be necessary for example for the Let's Encrypt DNS challange provider. See the example configuration above for an concrete example.
@@ -146,4 +158,4 @@ When using a supported Let's Encrypt provider (ie. Cloudflare) with DNS Challang
 Port 443 is used for HTTPS access.
 
 ### EntryPoint `traefik`, port `8080`
-Port 8080 is used for access to the Traefik dashboard.  
+Port 8080 is used for access to the Traefik dashboard.
