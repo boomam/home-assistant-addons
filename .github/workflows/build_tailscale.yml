@@ -19,10 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:    
       - name: Checkout the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
     
       - name: Test build
-        uses: home-assistant/builder@master
+        uses: home-assistant/builder/actions/build-image@@master
         with:
           args: |
             --test \
