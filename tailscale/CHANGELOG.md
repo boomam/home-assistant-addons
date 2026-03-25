@@ -10,8 +10,10 @@ The letter & number are bug fix releases where said issue is not with Tailscale,
 -----
 # Tailscale
 
-## Tailscale 1.96.3.a
+## Tailscale 1.96.2.a
 * Updated base image from v19.0.0 to v20.0.1
+* Reverted versioning in build process as TS havn't deployed latest tarballs to their package repo yet.
+
 ## Tailscale 1.96.3
 * Updated Tailscale from 1.94.2 to 1.96.3
 
