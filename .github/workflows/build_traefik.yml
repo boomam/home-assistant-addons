@@ -29,6 +29,7 @@ jobs:
             ghcr.io/home-assistant/amd64-builder:latest \
             --test \
             --target /data/${{ env.ADD_ON_DIRECTORY }} \
-            --all \
+            --amd64 \
+            --aarch64 \
             --docker-hub boomam \
             --image ${{ env.ADD_ON_DIRECTORY }}-add-on
