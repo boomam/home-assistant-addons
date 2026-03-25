@@ -1,69 +1,35 @@
-name: 'Build Tailscale'
+name: Build Tailscale
 
 env:
   ADD_ON_DIRECTORY: tailscale
-  IMAGE_NAME: tailscale
-  ARCHITECTURES: '["amd64", "aarch64"]'
 
 on:
   schedule:
-    - cron: "0 4 * * 4"   # run every Thursday days.
-#  push:
-#    paths:
-#      - 'traefik/build.yaml'   # trigger only if this file changes
-#    branches:
-#      - master                 
+    - cron: "0 4 * * 4"
   workflow_dispatch:
 
 jobs:
-  init:
-    name: Initialize build
+  build:
     runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.matrix.outputs.matrix }}
+
     steps:
       - uses: actions/checkout@v6
 
-      - name: Get build matrix
-        id: matrix
-        uses: home-assistant/builder/actions/prepare-multi-arch-matrix@master
-        with:
-          architectures: ${{ env.ARCHITECTURES }}
-          image-name: ${{ env.IMAGE_NAME }}
-  build:
-    name: Test build Tailscale
-    needs: init
-    runs-on: ubuntu-latest
-    steps:    
-      - name: Checkout the repository
-        uses: actions/checkout@v6
-    
-      - name: Test build
-        uses: home-assistant/builder/actions/build-image@master
-        with:
-          arch: ${{ matrix.arch }}
-#          args: |
-#            --test \
-#            --amd64 \
-#            --aarch64 \
-#            --target /data/${ADD_ON_DIRECTORY} \
-#            --docker-hub boomam \
-#            --image ${ADD_ON_DIRECTORY}-add-on
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
 
-  manifest:
-    name: Publish multi-arch manifest
-    needs: [init, build]
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      packages: write
-    steps:
-      - name: Publish multi-arch manifest
-        uses: home-assistant/builder/actions/publish-multi-arch-manifest@master
-        with:
-          architectures: ${{ env.ARCHITECTURES }}
-          container-registry-password: ${{ secrets.ACTIONS_PAT }}
-          image-name: ${{ env.IMAGE_NAME }}
-          image-tags: |
-            ${{ github.event.release.tag_name }}
-            latest
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Run builder (Docker directly)
+        run: |
+          docker run --rm \
+            --privileged \
+            -v "${{ github.workspace }}:/data" \
+            ghcr.io/home-assistant/amd64-builder:latest \
+            --test \
+            --target /data/${{ env.ADD_ON_DIRECTORY }} \
+            --amd64 \
+            --aarch64 \
+            --docker-hub boomam \
+            --image ${{ env.ADD_ON_DIRECTORY }}-add-on
