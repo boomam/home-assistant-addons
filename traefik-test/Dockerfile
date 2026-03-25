@@ -16,7 +16,8 @@ RUN if [ "${BUILD_ARCH}" == "aarch64" ]; then BUILD_ARCH=arm64; \
     rm -f /tmp/*
 
 COPY rootfs /
-RUN chmod a+x /etc/cont-init.d/traefik.sh
+RUN chmod a+x /etc/cont-init.d/traefik.sh \
+    && chmod a+x /etc/services.d/nginx/run
 
 LABEL \
     io.hass.name="Treafik TEST for ${BUILD_ARCH}" \
