@@ -8,6 +8,10 @@ The letter & number are bug fix releases where said issue is not with Traefik, b
 
 # Change Log
 
+## Traefik 3.6.11
+* Updated Traefik from 3.6.10 to 3.6.11
+
+
 ## Traefik 3.6.10
 * Updated Traefik from 3.6.9 to 3.6.10
 
