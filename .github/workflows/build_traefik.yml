@@ -1,4 +1,4 @@
-name: 'Build and test Traefik'
+name: 'Build Traefik'
 
 env:
   ADD_ON_DIRECTORY: traefik
