@@ -4,8 +4,8 @@ env:
   ADD_ON_DIRECTORY: traefik-test
 
 on:
-  schedule:
-    - cron: "0 4 * * 4"
+#  schedule:
+#    - cron: "0 4 * * 4"
   workflow_dispatch:
 
 jobs:
