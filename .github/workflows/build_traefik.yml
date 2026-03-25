@@ -2,6 +2,8 @@ name: 'Build and test Traefik'
 
 env:
   ADD_ON_DIRECTORY: traefik
+  IMAGE_NAME: traefik
+  ARCHITECTURES: '["amd64", "aarch64"]'
 
 on:
   schedule:
@@ -14,9 +16,33 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    name: Test build Traefik
+  init:
+    name: Initialize build
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Get build matrix
+        id: matrix
+        uses: home-assistant/builder/actions/prepare-multi-arch-matrix@master
+        with:
+          architectures: ${{ env.ARCHITECTURES }}
+          image-name: ${{ env.IMAGE_NAME }}
+          
+  build:
+    name: Build Traefik
+    runs-on: ${{ matrix.os }}
+    needs: init
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.init.outputs.matrix) }}
+      
     steps:    
       - name: Checkout the repository
         uses: actions/checkout@v6
@@ -24,10 +50,36 @@ jobs:
       - name: Test build
         uses: home-assistant/builder/actions/build-image@master
         with:
-          args: |
-            --test \
-            --amd64 \
-            --aarch64 \
-            --target /data/${ADD_ON_DIRECTORY} \
-            --docker-hub boomam \
-            --image ${ADD_ON_DIRECTORY}-add-on
+          arch: ${{ matrix.arch }}
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+          image: ${{ matrix.image }}
+          image-tags: |
+            ${{ github.event.release.tag_name }}
+            latest
+          push: "true"
+          version: ${{ github.event.release.tag_name }}
+#          args: |
+#            --test \
+#            --amd64 \
+#            --aarch64 \
+#            --target /data/${ADD_ON_DIRECTORY} \
+#            --docker-hub boomam \
+#            --image ${ADD_ON_DIRECTORY}-add-on
+
+  manifest:
+    name: Publish multi-arch manifest
+    needs: [init, build]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      packages: write
+    steps:
+      - name: Publish multi-arch manifest
+        uses: home-assistant/builder/actions/publish-multi-arch-manifest@master
+        with:
+          architectures: ${{ env.ARCHITECTURES }}
+          container-registry-password: ${{ secrets.ACTIONS_PAT }}
+          image-name: ${{ env.IMAGE_NAME }}
+          image-tags: |
+            ${{ github.event.release.tag_name }}
+            latest
