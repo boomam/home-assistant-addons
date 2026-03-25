@@ -18,16 +18,16 @@ RUN if [ "${BUILD_ARCH}" == "aarch64" ]; then BUILD_ARCH=arm64; \
 COPY rootfs /
 
 LABEL \
-    io.hass.name="Treafik for ${BUILD_ARCH}" \
-    io.hass.description="Home Assistant Unofficial Add-on: ${BUILD_ARCH} Traefik image" \
+    io.hass.name="Treafik TEST for ${BUILD_ARCH}" \
+    io.hass.description="Home Assistant Unofficial Add-on: ${BUILD_ARCH} Traefik TEST image" \
     maintainer="BoomAM" \
-    org.opencontainers.image.title="Traefik for ${BUILD_ARCH}" \
-    org.opencontainers.image.description="Home Assistant Unofficial Add-on: ${BUILD_ARCH} Traefik image" \
+    org.opencontainers.image.title="Traefik for TEST ${BUILD_ARCH}" \
+    org.opencontainers.image.description="Home Assistant Unofficial Add-on: ${BUILD_ARCH} Traefik TEST image" \
     org.opencontainers.image.vendor="BoomAM" \
     org.opencontainers.image.authors="BoomAM" \
     org.opencontainers.image.url="https://github.com/boomam/home-assistant-addons" \
     org.opencontainers.image.source="https://github.com/boomam/home-assistant-addons" \
-    org.opencontainers.image.documentation="https://github.com/boomam/home-assistant-addons/blob/master/traefik/README.md" \
+    org.opencontainers.image.documentation="https://github.com/boomam/home-assistant-addons/blob/master/traefik-test/README.md" \
     org.opencontainers.image.created=${BUILD_DATE} \
     org.opencontainers.image.revision=${BUILD_REF} \
     org.opencontainers.image.version=${BUILD_VERSION}
