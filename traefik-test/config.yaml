@@ -1,0 +1,75 @@
+# This file defines how things are displayed in HA, options that show, etc.
+name: Traefik
+version: 3.6.11.test
+slug: traefik
+description: |
+  Traefik is a modern HTTP reverse proxy and load balancer that makes deploying microservices easy. 
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+startup: system
+init: false
+stage: stable
+boot: auto
+url: https://github.com/boomam/home-assistant-addons/tree/master/traefik
+ports:
+  80/tcp: 80
+  443/tcp: 443
+  8080/tcp: 8080
+ports_description:
+  80/tcp: HTTP
+  443/tcp: HTTPS
+  8080/tcp: traefik dashboard
+ingress: true
+ingress_entry: dashboard/
+#ingress_port: 443
+#ingress_stream: true
+hassio_role: default
+hassio_api: true
+panel_icon: mdi:earth-arrow-right
+map:
+  - config
+  - share
+  - ssl:rw
+options:
+  log_level: ERROR
+  access_logs: false
+  forwarded_headers_insecure: false
+  insecure_skip_verify: false
+  dynamic_configuration_path: "/config/traefik/"
+  letsencrypt:
+    enabled: false
+    resolvers:
+      - 1.1.1.1:53
+    email: youremail@domain.com
+    challenge_type: dnsChallenge
+    provider: cloudflare
+    delayBeforeCheck: 10
+  custom_config:
+    use_config_file: false
+    config_file: "/config/traefik/traefik.yaml"
+  env_vars: []
+schema:
+  log_level: list(TRACE|DEBUG|INFO|WARN|ERROR|FATAL|PANIC)
+  access_logs: bool
+  forwarded_headers_insecure: bool
+  insecure_skip_verify: bool
+  proxy_protocol_trusted_ips:
+    - str?
+  dynamic_configuration_path: str
+  letsencrypt:
+    enabled: bool
+    email: email?
+    challenge_type: match(tlsChallenge|httpChallenge|dnsChallenge)?
+    provider: str?
+    delayBeforeCheck: int?
+    resolvers:
+      - str?
+  custom_config:
+    use_config_file: bool
+    config_file: str
+  env_vars:
+    - str

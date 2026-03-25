@@ -1,0 +1,13 @@
+configuration:
+  custom_config:
+    name: Custom Config
+    description: >-
+      Use this section to completely override the add-on's built-in behavior and provide your own Traefik static configuration.
+      
+      WARNING: If the toggle below is enabled, ALL standard configuration options above (such as Let's Encrypt, Log Level, and Insecure Skip Verify) will be IGNORED.
+  use_config_file:
+    name: Enable custom traefik config file
+    description: Enable this to start Traefik using the configuration file specified below.
+  config_file:
+    name: Configuration File Path
+    description: Provide an absolute path to a configuration file (e.g., /config/traefik/traefik.yaml).
