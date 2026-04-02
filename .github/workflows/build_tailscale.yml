@@ -1,4 +1,4 @@
-name: Build Tailscale
+name: Test Build Tailscale
 
 env:
   ADD_ON_DIRECTORY: tailscale
