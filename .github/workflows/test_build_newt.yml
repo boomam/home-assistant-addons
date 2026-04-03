@@ -21,25 +21,16 @@ jobs:
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v4
 
-#      - name: Run builder (Docker directly)
-#        run: |
-#          docker run --rm \
-#            --privileged \
-#            -v "${{ github.workspace }}:/data" \
-#            ghcr.io/home-assistant/amd64-builder:latest \
-#            --test \
-#           --target ${{ env.ADD_ON_DIRECTORY }} \
-#            --amd64 \
-#            --aarch64 \
-#            --docker-hub boomam \
-#            --image ${{ env.ADD_ON_DIRECTORY }}-add-on
-
-      - name: Build Newt App
-        uses: home-assistant/builder@master
-        with:
-          args: |
+      - name: Run builder (Docker directly)
+        run: |
+          docker run --rm \
+            --privileged \
+            -v "${{ github.workspace }}:/data" \
+            ghcr.io/home-assistant/amd64-builder:latest \
             --test \
-            --target ${{ env.ADD_ON_DIRECTORY }} \
+#           --target ${{ env.ADD_ON_DIRECTORY }} \
+           --target ${{ env.ADD_ON_DIRECTORY }} \
             --amd64 \
             --aarch64 \
-            --docker-hub boomam
+            --docker-hub boomam \
+            --image ${{ env.ADD_ON_DIRECTORY }}-add-on
