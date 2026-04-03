@@ -35,11 +35,11 @@ jobs:
 #            --image ${{ env.ADD_ON_DIRECTORY }}-add-on
 
       - name: Build Newt App
-            uses: home-assistant/builder@master
-            with:
-              args: |
-                --test \
-                --target ${{ env.ADD_ON_DIRECTORY }} \
-                --amd64 \
-                --aarch64 \
-                --docker-hub boomam
+        uses: home-assistant/builder@master
+        with:
+          args: |
+            --test \
+            --target ${{ env.ADD_ON_DIRECTORY }} \
+            --amd64 \
+            --aarch64 \
+            --docker-hub boomam
