@@ -1,7 +1,7 @@
 name: Test Build Newt
 
 env:
-  ADD_ON_DIRECTORY: Newt
+  ADD_ON_DIRECTORY: newt
 
 on:
 #  schedule:
