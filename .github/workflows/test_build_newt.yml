@@ -28,7 +28,8 @@ jobs:
             -v "${{ github.workspace }}:/data" \
             ghcr.io/home-assistant/amd64-builder:latest \
             --test \
-            --target /data/${{ env.ADD_ON_DIRECTORY }} \
+#            --target /data/${{ env.ADD_ON_DIRECTORY }} \
+#            --target ${{ env.ADD_ON_DIRECTORY }} \
             --amd64 \
             --aarch64 \
             --docker-hub boomam \
