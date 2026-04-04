@@ -1,0 +1,80 @@
+name: Update Newt Version
+
+on:
+  schedule:
+    - cron: "0 3 * * 5"   # run every Wednesday
+  workflow_dispatch:
+
+jobs:
+  newt-update-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+
+      - name: Get latest Newt release XXXXXXXXXXXXXXXX
+        id: newt
+        run: |
+          latest=$(curl -s https://api.github.com/repos/fosrl/newt/releases/latest | jq -r .tag_name)
+          latest=${latest#v}
+          echo "latest=$latest" >> $GITHUB_OUTPUT
+
+      - name: Get current version
+        id: current
+        run: |
+          current=$(grep "NEWT_VERSION:" newt/build.yaml | awk '{print $2}')
+          echo "current=$current" >> $GITHUB_OUTPUT
+
+      - name: Check if update is needed
+        id: check
+        run: |
+          if [ "${{ steps.newt.outputs.latest }}" = "${{ steps.current.outputs.current }}" ]; then
+            echo "update=false" >> $GITHUB_OUTPUT
+          else
+            echo "update=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update build.yaml
+        if: steps.check.outputs.update == 'true'
+        run: |
+          sed -i "s/^  NEWT_VERSION:.*/  NEWT_VERSION: ${{ steps.newt.outputs.latest }}/" newt/build.yaml
+      
+      - name: Update CHANGELOG.md
+        if: steps.check.outputs.update == 'true'
+        run: |
+          old_version=${{ steps.current.outputs.current }}
+          new_version=${{ steps.newt.outputs.latest }}
+
+          awk -v old="$old_version" -v new="$new_version" '
+          /^# Change Log$/ {
+            print
+            print ""
+            print "## Newt " new
+            print "* Updated Newt from " old " to " new
+            print ""
+            next
+          }
+          { print }
+          ' newt/CHANGELOG.md > newt/CHANGELOG.tmp
+
+          mv newt/CHANGELOG.tmp newt/CHANGELOG.md
+
+      - name: Update config.yaml
+        if: steps.check.outputs.update == 'true'
+        run: |
+          new_version=${{ steps.newt.outputs.latest }}
+          sed -i "3c\version: $new_version" newt/config.yaml
+
+      - name: Commit changes
+        if: steps.check.outputs.update == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add newt/build.yaml newt/CHANGELOG.md newt/config.yaml
+          git commit -m "Update Newt to ${{ steps.newt.outputs.latest }}"
+          git push
+
+      - name: No update needed
+        if: steps.check.outputs.update == 'false'
+        run: echo "✅ Newt is already up to date (version ${{ steps.current.outputs.current }})"
