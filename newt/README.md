@@ -8,8 +8,8 @@ Newt bundled as an Home Assistant add-on.
 ![armv7-shield](https://img.shields.io/badge/armv7-yes-green)
 ![i386-shield](https://img.shields.io/badge/i386-yes-green)
 
-[![Update Traefik Version](https://github.com/boomam/home-assistant-addons/actions/workflows/traefik-update-version.yml/badge.svg)](https://github.com/boomam/home-assistant-addons/actions/workflows/traefik-update-version.yml)  
-[![Build and test Traefik](https://github.com/boomam/home-assistant-addons/actions/workflows/build_traefik.yml/badge.svg)](https://github.com/boomam/home-assistant-addons/actions/workflows/build_traefik.yml)
+[![Update Newt Version](https://github.com/boomam/home-assistant-addons/actions/workflows/newt-update-version.yml/badge.svg)](https://github.com/boomam/home-assistant-addons/actions/workflows/newt-update-version.yml)  
+[![Build and test Newt](https://github.com/boomam/home-assistant-addons/actions/workflows/test_build_newt.yml/badge.svg)](https://github.com/boomam/home-assistant-addons/actions/workflows/build_traefik.yml)
 
 ## About
 Newt is a fully user space WireGuard tunnel client and TCP/UDP proxy, designed to securely expose private resources controlled by Pangolin. By using Newt, you don't need to manage complex WireGuard tunnels and NATing.  
