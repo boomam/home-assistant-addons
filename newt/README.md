@@ -18,8 +18,8 @@ Newt is a fully user space WireGuard tunnel client and TCP/UDP proxy, designed t
 
 ## Configuration
 During configuration, make sure you are adding *all* of the environment variables asked for.
-You can gather most of these through following the Pangolin Docs on the topic, [here](xxxx)
+You can gather most of these through following the Pangolin Docs on the topic, [here]([xxxx](https://docs.pangolin.net/manage/sites/install-site))
 
 ## Final notes
 
-This project is not affiliated with Fosrl, the Newt Maintainer Team or the Pangolin maintainer team, but simply a community effort.  
+This project is not affiliated with Fosrl or the Newt/Pangolin maintainer team, but simply a community effort.  
