@@ -1,5 +1,5 @@
 name: "Newt TEST"
-version: "1.10.4"
+version: "1.10.4.a"
 slug: "newt"
 description: "Newt client for Home Assistant, for Pangolin connectivity"
 icon: "icon.png"
