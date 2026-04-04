@@ -21,5 +21,4 @@ During configuration, make sure you are adding *all* of the environment variable
 You can gather most of these through following the Pangolin Docs on the topic, [here](https://docs.pangolin.net/manage/sites/install-site).  
 
 ## Final notes
-
 This project is not affiliated with Fosrl or the Newt/Pangolin maintainer team, but simply a community effort.  
