@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v6
 
-      - name: Get latest Newt release XXXXXXXXXXXXXXXX
+      - name: Get latest Newt release
         id: newt
         run: |
           latest=$(curl -s https://api.github.com/repos/fosrl/newt/releases/latest | jq -r .tag_name)
