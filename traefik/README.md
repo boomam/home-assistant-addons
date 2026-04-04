@@ -9,7 +9,7 @@ Traefik bundled as an Home Assistant add-on.
 ![i386-shield](https://img.shields.io/badge/i386-yes-green)
 
 [![Update Traefik Version](https://github.com/boomam/home-assistant-addons/actions/workflows/traefik-update-version.yml/badge.svg)](https://github.com/boomam/home-assistant-addons/actions/workflows/traefik-update-version.yml)  
-[![Build and test Traefik](https://github.com/boomam/home-assistant-addons/actions/workflows/build_traefik.yml/badge.svg)](https://github.com/boomam/home-assistant-addons/actions/workflows/build_traefik.yml)
+[![Build and test Traefik](https://github.com/boomam/home-assistant-addons/actions/workflows/test_build_traefik.yml/badge.svg)](https://github.com/boomam/home-assistant-addons/actions/workflows/test_build_traefik.yml)
 
 ## About
 ### This was forked and updated from an inactive github project [here](https://alxx.nl/home-assistant-addons/) -  
