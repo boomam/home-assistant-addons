@@ -1,29 +1,63 @@
-#!/usr/bin/env bashio
+#!/usr/bin/env bash
+set -e
 
-bashio::log.info "Starting the Newt Add-on..."
+echo "Starting Newt..."
 
-# ---------------------------------------------------------
-# 1. Map Home Assistant Config to Environment Variables
-# ---------------------------------------------------------
-# Your README mentions Newt needs environment variables.
-# You will read the options users set in the Home Assistant UI
-# (defined in your config.yaml) and export them here.
+CONFIG_PATH="/data/options.json"
+HEALTH_FILE="${HEALTH_FILE:-/tmp/healthy}"
 
-# Example: If you have a config option called 'pangolin_token'
-# if bashio::config.has_value 'pangolin_token'; then
-#     export PANGOLIN_TOKEN=$(bashio::config 'pangolin_token')
-# fi
+export HEALTH_FILE
 
-# Example: If you have a config option called 'listen_port'
-# if bashio::config.has_value 'listen_port'; then
-#     export NEWT_LISTEN_PORT=$(bashio::config 'listen_port')
-# fi
+if [[ ! -f "$CONFIG_PATH" ]]; then
+    echo "ERROR: Configuration file not found at $CONFIG_PATH!"
+    exit 1
+fi
 
-# ---------------------------------------------------------
-# 2. Execute the Application
-# ---------------------------------------------------------
-bashio::log.info "Executing /usr/bin/newt..."
+PANGOLIN_ENDPOINT=$(jq -r '.PANGOLIN_ENDPOINT' "$CONFIG_PATH")
+NEWT_ID=$(jq -r '.NEWT_ID' "$CONFIG_PATH")
+NEWT_SECRET=$(jq -r '.NEWT_SECRET' "$CONFIG_PATH")
 
-# Use 'exec' to replace the bash process with the newt process
-# so that Home Assistant can properly track its state and shut it down.
-exec /usr/bin/newt
+# Read custom env variables
+CUSTOM_ENV_VARS=$(jq -r '.custom_env_vars // [] | .[]' "$CONFIG_PATH")
+
+if [[ -z "$PANGOLIN_ENDPOINT" || "$PANGOLIN_ENDPOINT" == "null" || \
+      -z "$NEWT_ID" || "$NEWT_ID" == "null" || \
+      -z "$NEWT_SECRET" || "$NEWT_SECRET" == "null" ]]; then
+    echo "ERROR: Missing minimum required configuration values!"
+    exit 1
+fi
+
+echo "Configuration Loaded:"
+echo "  PANGOLIN_ENDPOINT=$PANGOLIN_ENDPOINT"
+echo "  NEWT_ID=$NEWT_ID"
+echo "  NEWT_SECRET=$NEWT_SECRET"
+echo "  HEALTH_FILE=$HEALTH_FILE"
+
+# Export minimum required variables
+export PANGOLIN_ENDPOINT="$PANGOLIN_ENDPOINT"
+export NEWT_ID="$NEWT_ID"
+export NEWT_SECRET="$NEWT_SECRET"
+
+# Process & export custom environment variables
+if [[ -n "$CUSTOM_ENV_VARS" ]]; then
+    echo "✅ Custom Environment Variables:"
+    while IFS= read -r env_var; do
+        if [[ -n "$env_var" ]]; then
+            echo "  $env_var"
+            export "$env_var"
+        fi
+    done <<< "$CUSTOM_ENV_VARS"
+fi
+
+# Auto-reconnect loop
+while true; do
+    echo "🔹 Starting Newt..."
+
+    # Remove stale health file before starting
+    rm -f "$HEALTH_FILE"
+
+    /usr/bin/newt
+
+    echo "Newt stopped! Waiting 5 seconds before reconnecting..."
+    sleep 5
+done
