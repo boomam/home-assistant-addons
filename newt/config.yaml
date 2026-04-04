@@ -1,4 +1,4 @@
-name: "Newt"
+name: Newt
 version: 1.11.0
 description: "Newt client for Home Assistant, for Pangolin connectivity"
 icon: "icon.png"
