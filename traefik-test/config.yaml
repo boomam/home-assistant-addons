@@ -1,6 +1,6 @@
 # This file defines how things are displayed in HA, options that show, etc.
 name: Traefik-TEST
-version: 3.6.13
+version: 3.6.14
 slug: traefik-test
 description: |
   Traefik is a modern HTTP reverse proxy and load balancer that makes deploying microservices easy. 
