@@ -1,6 +1,6 @@
 name: Newt
 version: 1.12.3
-slug "newt"
+slug: "newt"
 description: "Newt client for Home Assistant, for Pangolin connectivity"
 url: https://github.com/boomam/home-assistant-addons
 icon: "icon.png"
