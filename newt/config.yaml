@@ -1,13 +1,12 @@
 name: Newt
 version: 1.12.3
+slug "newt"
 description: "Newt client for Home Assistant, for Pangolin connectivity"
 url: https://github.com/boomam/home-assistant-addons
 icon: "icon.png"
 arch:
   - amd64
   - aarch64
-  - armv7
-  - armhf
 startup: services
 boot: auto
 host_network: true
