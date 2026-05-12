@@ -64,7 +64,7 @@ jobs:
         if: steps.check.outputs.update == 'true'
         run: |
           new_version=${{ steps.newt.outputs.latest }}
-          sed -i "3c\version: $new_version" newt/config.yaml
+          sed -i "s/^version:.*/version: $new_version/" newt/config.yaml
 
       - name: Commit changes
         if: steps.check.outputs.update == 'true'
