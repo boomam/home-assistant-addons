@@ -1,4 +1,5 @@
 name: Newt
+slug: newt
 version: 1.12.4
 description: |
   Newt client for Home Assistant, for Pangolin connectivity
