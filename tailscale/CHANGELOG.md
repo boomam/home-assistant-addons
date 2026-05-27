@@ -9,6 +9,9 @@ The letter & number are bug fix releases where said issue is not with Tailscale,
 
 -----
 # Tailscale
+## Tailscale 1.98.3
+* Updated Tailscale from 1.98.2 to 1.98.3
+
 ## Tailscale 1.98.2
 * Updated Tailscale from 1.96.4 to 1.98.2
 
