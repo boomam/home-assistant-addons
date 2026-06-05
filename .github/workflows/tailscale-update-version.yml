@@ -16,8 +16,9 @@ jobs:
       - name: Get latest Tailscale release
         id: tailscale
         run: |
-          latest=$(curl -s https://api.github.com/repos/tailscale/tailscale/releases/latest | jq -r .tag_name)
-          latest=${latest#v}
+          # Fetch the stable release JSON and extract the version from the amd64 tarball filename
+          tarball=$(curl -s "https://pkgs.tailscale.com/stable/?mode=json" | jq -r '.Tarballs.amd64')
+          latest=$(echo "$tarball" | cut -d_ -f2)
           echo "latest=$latest" >> $GITHUB_OUTPUT
 
       - name: Get current version
@@ -38,7 +39,8 @@ jobs:
       - name: Update build.yaml
         if: steps.check.outputs.update == 'true'
         run: |
-          sed -i "s/^  TAILSCALE_VERSION:.*/  TAILSCALE_VERSION: ${{ steps.tailscale.outputs.latest }}/" tailscale/build.yaml
+          # Using [[:space:]]* makes this resilient to indentation changes
+          sed -i "s/^[[:space:]]*TAILSCALE_VERSION:.*/  TAILSCALE_VERSION: ${{ steps.tailscale.outputs.latest }}/" tailscale/build.yaml
           
       - name: Update CHANGELOG.md
         if: steps.check.outputs.update == 'true'
@@ -46,13 +48,15 @@ jobs:
           old_version=${{ steps.current.outputs.current }}
           new_version=${{ steps.tailscale.outputs.latest }}
           echo "Updating changelog from $old_version to $new_version"
+          # Note: This still relies on line 11 being the correct insertion point
           sed -i "11a ## Tailscale $new_version\n* Updated Tailscale from $old_version to $new_version\n" tailscale/CHANGELOG.md
 
       - name: Update config.yaml
         if: steps.check.outputs.update == 'true'
         run: |
           new_version=${{ steps.tailscale.outputs.latest }}
-          sed -i "3c\version: $new_version" tailscale/config.yaml
+          # Searching for the exact key rather than hardcoding line 3
+          sed -i "s/^version:.*/version: $new_version/" tailscale/config.yaml
 
       - name: Commit changes
         if: steps.check.outputs.update == 'true'

@@ -1,9 +1,9 @@
 # This file defines how things are displayed in HA, options that show, etc.
 name: Tailscale
-version: 1.94.2
+version: 1.98.4
 slug: tailscale
 description: Zero config VPN for building secure networks
-url: https://github.com/hassio-addons/addon-tailscale
+url: https://github.com/boomam/home-assistant-addons
 ingress: true
 ingress_port: 0
 ingress_stream: true

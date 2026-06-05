@@ -9,7 +9,7 @@ Tailscale bundled as an Home Assistant add-on.
 ![i386-shield](https://img.shields.io/badge/i386-yes-green)
 
 [![Update Tailscale Version](https://github.com/boomam/home-assistant-addons/actions/workflows/tailscale-update-version.yml/badge.svg?branch=master)](https://github.com/boomam/home-assistant-addons/actions/workflows/tailscale-update-version.yml)  
-[![Build and test Tailscale](https://github.com/boomam/home-assistant-addons/actions/workflows/build_tailscale.yml/badge.svg)](https://github.com/boomam/home-assistant-addons/actions/workflows/build_tailscale.yml)
+[![Build and test Tailscale](https://github.com/boomam/home-assistant-addons/actions/workflows/test_build_tailscale.yml/badge.svg)](https://github.com/boomam/home-assistant-addons/actions/workflows/test_build_tailscale.yml)
 
 ## About
 ### This was forked and updated from an this github project [here](https://github.com/hassio-addons/addon-tailscale) -  

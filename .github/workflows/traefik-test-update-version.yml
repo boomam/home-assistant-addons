@@ -1,0 +1,88 @@
+name: Update Traefik Test Version
+
+on:
+  schedule:
+    - cron: "0 4 * * 1"   # run every Monday
+  workflow_dispatch:
+
+jobs:
+  traefik-update-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+
+      - name: Get latest Traefik release
+        id: traefik
+        run: |
+          latest=$(curl -s https://api.github.com/repos/traefik/traefik/releases/latest | jq -r .tag_name)
+          latest=${latest#v}
+          echo "latest=$latest" >> $GITHUB_OUTPUT
+
+      - name: Get current version
+        id: current
+        run: |
+          current=$(grep "TRAEFIK_VERSION:" traefik-test/build.yaml | awk '{print $2}')
+          echo "current=$current" >> $GITHUB_OUTPUT
+
+      - name: Check if update is needed
+        id: check
+        run: |
+          if [ "${{ steps.traefik.outputs.latest }}" = "${{ steps.current.outputs.current }}" ]; then
+            echo "update=false" >> $GITHUB_OUTPUT
+          else
+            echo "update=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update build.yaml
+        if: steps.check.outputs.update == 'true'
+        run: |
+          sed -i "s/^  TRAEFIK_VERSION:.*/  TRAEFIK_VERSION: ${{ steps.traefik.outputs.latest }}/" traefik-test/build.yaml
+      
+      - name: Update CHANGELOG.md
+        if: steps.check.outputs.update == 'true'
+        run: |
+          old_version=${{ steps.current.outputs.current }}
+          new_version=${{ steps.traefik.outputs.latest }}
+
+          awk -v old="$old_version" -v new="$new_version" '
+          /^# Change Log$/ {
+            print
+            print ""
+            print "## Traefik " new
+            print "* Updated Traefik from " old " to " new
+            print ""
+            next
+          }
+          { print }
+          ' traefik-test/CHANGELOG.md > traefik-test/CHANGELOG.tmp
+
+          mv traefik-test/CHANGELOG.tmp traefik-test/CHANGELOG.md
+
+#      - name: Update CHANGELOG.md
+#        if: steps.check.outputs.update == 'true'
+#        run: |
+#          old_version=${{ steps.current.outputs.current }}
+#          new_version=${{ steps.traefik.outputs.latest }}
+#          echo "Updating changelog from $old_version to $new_version"
+#          sed -i "11a ## Traefik $new_version\n* Updated Traefik from $old_version to $new_version\n" traefik-test/CHANGELOG.md
+
+      - name: Update config.yaml
+        if: steps.check.outputs.update == 'true'
+        run: |
+          new_version=${{ steps.traefik.outputs.latest }}
+          sed -i "3c\version: $new_version" traefik-test/config.yaml
+
+      - name: Commit changes
+        if: steps.check.outputs.update == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add traefik-test/build.yaml traefik-test/CHANGELOG.md traefik-test/config.yaml
+          git commit -m "Update Traefik to ${{ steps.traefik.outputs.latest }}"
+          git push
+
+      - name: No update needed
+        if: steps.check.outputs.update == 'false'
+        run: echo "✅ Traefik is already up to date (version ${{ steps.current.outputs.current }})"

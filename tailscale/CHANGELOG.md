@@ -9,6 +9,29 @@ The letter & number are bug fix releases where said issue is not with Tailscale,
 
 -----
 # Tailscale
+## Tailscale 1.98.4
+* Updated Tailscale from 1.98.3 to 1.98.4
+
+## Tailscale 1.98.3
+* Updated Tailscale from 1.98.2 to 1.98.3
+
+## Tailscale 1.98.2
+* Updated Tailscale from 1.96.4 to 1.98.2
+
+
+## Tailscale 1.96.4.a
+* Updated base image from 20.0.1 to 20.1.0.
+
+## Tailscale 1.96.4
+* Updated Tailscale from 1.96.2 to 1.96.4
+
+## Tailscale 1.96.2.a
+* Updated base image from v19.0.0 to v20.0.1
+* Reverted versioning in build process as TS havn't deployed latest tarballs to their package repo yet.
+
+## Tailscale 1.96.3
+* Updated Tailscale from 1.94.2 to 1.96.3
+
 ## Tailscale 1.94.2
 * Updated Tailscale from 1.94.1 to 1.94.2
 

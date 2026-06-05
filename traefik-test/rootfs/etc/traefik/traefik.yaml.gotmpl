@@ -1,0 +1,76 @@
+# Traefik static configuration
+# DO NOT MODIFY -- Managed by Home Assistant Traefik add-on
+
+{{- $options := (ds "options") }}
+
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
+
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+  websecure:
+    address: ":443"
+{{- if has $options "forwarded_headers_insecure" }}
+    forwardedHeaders:
+      insecure: {{ $options.forwarded_headers_insecure }}
+{{- end }}
+{{- if and (has $options "proxy_protocol_trusted_ips") (gt (len $options.proxy_protocol_trusted_ips) 0) }}
+    proxyProtocol:
+      trustedIPs:
+      {{- range $options.proxy_protocol_trusted_ips }}
+        - "{{ . }}"
+      {{- end }}
+{{- end }}
+
+api:
+  dashboard: true
+  insecure: true
+
+{{- if has $options "insecure_skip_verify" }}
+serversTransport:
+  insecureSkipVerify: {{ $options.insecure_skip_verify }}
+{{- end }}
+
+{{ if and (has $options "letsencrypt") ($options.letsencrypt.enabled) -}}
+certificatesResolvers:
+  le:
+    acme:
+      email: "{{ $options.letsencrypt.email }}"
+      storage: "/ssl/traefik/acme.json"
+  {{- if or (not (has $options.letsencrypt "challenge_type")) (eq $options.letsencrypt.challenge_type "tlsChallenge") }}
+      tlsChallenge: {}
+  {{- else if eq $options.letsencrypt.challenge_type "httpChallenge" }}
+      httpChallenge:
+        entryPoint: web
+  {{- else if eq $options.letsencrypt.challenge_type "dnsChallenge" }}
+      dnsChallenge:
+        provider: {{ $options.letsencrypt.provider }}
+    {{- if has $options.letsencrypt "delayBeforeCheck" }}
+        delayBeforeCheck: {{ $options.letsencrypt.delayBeforeCheck }}
+    {{- end }}
+      {{- if and (has $options.letsencrypt "resolvers") (gt (len $options.letsencrypt.resolvers) 0) }}
+        resolvers:
+        {{- range $options.letsencrypt.resolvers }}
+          - "{{ . }}"
+        {{- end }}
+      {{- end }}
+  {{- end }}
+{{- end }}
+
+providers:
+  file:
+    directory: "{{ $options.dynamic_configuration_path }}"
+
+{{ if and (has $options "access_logs") $options.access_logs -}}
+accessLog: {}
+{{- end }}
+
+log:
+  level: {{ strings.ToUpper $options.log_level }}
