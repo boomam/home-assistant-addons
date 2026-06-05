@@ -48,6 +48,9 @@ options:
     challenge_type: dnsChallenge
     provider: cloudflare
     delayBeforeCheck: 10
+  custom_config:
+    use_config_file: false
+    config_file: "/config/traefik/traefik.yaml"
   env_vars: []
 schema:
   log_level: list(TRACE|DEBUG|INFO|WARN|ERROR|FATAL|PANIC)
@@ -65,5 +68,8 @@ schema:
     delayBeforeCheck: int?
     resolvers:
       - str?
+  custom_config:
+    use_config_file: bool
+    config_file: str
   env_vars:
     - str
