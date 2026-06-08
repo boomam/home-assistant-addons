@@ -8,6 +8,10 @@ The letter & number are bug fix releases where said issue is not with Traefik, b
 
 # Change Log
 
+## Traefik 3.7.4
+* Updated Traefik from 3.7.1 to 3.7.4
+
+
 ## Traefik 3.7.1.a
 * Testing of SHA256 verification logic by [nickgreenway](https://github.com/nickgreenway)
 
