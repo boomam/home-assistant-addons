@@ -29,6 +29,7 @@ ingress_entry: dashboard/
 #ingress_stream: true
 hassio_role: default
 hassio_api: true
+auth_api: true
 panel_icon: mdi:earth-arrow-right
 map:
   - config
