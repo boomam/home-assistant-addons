@@ -7,6 +7,7 @@ First three digits are Pangolin-CLI's version number.
 The letter & number are bug fix releases where said issue is not with Pangolin-CLI, but with this template.  
 
 # Change Log
+
 ## Pangolin-CLI 0.17.0
 * Pangolin-CLI 0.17.0
 * Base 21.0.5
