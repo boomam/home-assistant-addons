@@ -1,5 +1,5 @@
 name: "Pangolin-CLI"
-version: null
+version: 0.17.0
 slug: "pangolin-cli"
 description: "Pangolin-CLI client for Home Assistant, for Pangolin connectivity"
 icon: "icon.png"
@@ -23,8 +23,8 @@ options:
   custom_env_vars: []
 schema:
   PANGOLIN_ENDPOINT: "str"
-  NEWT_ID: "str"
-  NEWT_SECRET: "str"
+  SITE_ID: "str"
+  SITE_SECRET: "str"
   custom_env_vars:
     - "match(^[A-Z_][A-Z0-9_]*=.+$)"
 map:
