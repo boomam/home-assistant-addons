@@ -1,0 +1,9 @@
+# https://github.com/hassio-addons/addon-base
+build_from:
+  aarch64: ghcr.io/hassio-addons/base/aarch64:21.0.5
+  amd64: ghcr.io/hassio-addons/base/amd64:21.0.5
+  armhf: ghcr.io/hassio-addons/base/armhf:21.0.5
+  armv7: ghcr.io/hassio-addons/base/armv7:21.0.5
+  i386: ghcr.io/hassio-addons/base/i386:21.0.5
+args:
+  PANGOLIN_CLI_VERSION: 1.10.4
