@@ -1,6 +1,6 @@
 name: "Pangolin-CLI Add-on"
 version: "0.17.0"
-slug: "newt"
+slug: "pangolin-cli"
 description: "Pangolin-CLI client for Home Assistant, for Pangolin connectivity"
 icon: "icon.png"
 arch:
