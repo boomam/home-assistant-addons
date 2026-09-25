@@ -51,12 +51,12 @@ fi
 
 # Auto-reconnect loop
 while true; do
-    echo "🔹 Starting Newt..."
+    echo "🔹 Starting Pangolin-CLI..."
 
     # Remove stale health file before starting
     rm -f "$HEALTH_FILE"
 
-    /usr/bin/newt
+    /usr/bin/pangolin-cli
 
     echo "Pangolin-CLI stopped! Waiting 5 seconds before reconnecting..."
     sleep 5
