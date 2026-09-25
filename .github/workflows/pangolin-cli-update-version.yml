@@ -16,14 +16,14 @@ jobs:
       - name: Get latest Pangolin-CLI release
         id: pangolin-cli
         run: |
-          latest=$(curl -s https://api.github.com/repos/fosrl/pangolin-cli/releases/latest | jq -r .tag_name)
+          latest=$(curl -s https://api.github.com/repos/fosrl/cli/releases/latest | jq -r .tag_name)
           latest=${latest#v}
           echo "latest=$latest" >> $GITHUB_OUTPUT
 
       - name: Get current version
         id: current
         run: |
-          current=$(grep "PANGOLIN_CLI_VERSION:" newt/build.yaml | awk '{print $2}')
+          current=$(grep "PANGOLIN_CLI_VERSION:" pangolin-cli/build.yaml | awk '{print $2}')
           echo "current=$current" >> $GITHUB_OUTPUT
 
       - name: Check if update is needed
