@@ -16,7 +16,6 @@ RUN apk add --no-cache bash curl jq
 
 # Download PANGOLIN_CLI, by Arch
 # Detect system architecture and download the correct PANGOLIN_CLI binary
-ARG PANGOLIN_CLI_VERSION
 RUN ARCH=$(uname -m) && \
     if [ "$ARCH" = "x86_64" ]; then \
         curl -fsSL -o /usr/bin/pangolin-cli https://github.com/fosrl/cli/releases/download/${PANGOLIN_CLI_VERSION}/pangolin-cli_linux_amd64; \
