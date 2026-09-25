@@ -1,9 +1,9 @@
 # https://github.com/hassio-addons/addon-base
 build_from:
-  aarch64: ghcr.io/hassio-addons/base/aarch64:20.1.0
-  amd64: ghcr.io/hassio-addons/base/amd64:20.1.0
-  armhf: ghcr.io/hassio-addons/base/armhf:20.1.0
-  armv7: ghcr.io/hassio-addons/base/armv7:20.1.0
-  i386: ghcr.io/hassio-addons/base/i386:20.1.0
+  aarch64: ghcr.io/hassio-addons/base/aarch64:21.0.5
+  amd64: ghcr.io/hassio-addons/base/amd64:21.0.5
+  armhf: ghcr.io/hassio-addons/base/armhf:21.0.5
+  armv7: ghcr.io/hassio-addons/base/armv7:21.0.5
+  i386: ghcr.io/hassio-addons/base/i386:21.0.5
 args:
   TRAEFIK_VERSION: 3.7.13
