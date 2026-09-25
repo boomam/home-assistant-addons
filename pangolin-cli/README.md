@@ -22,4 +22,4 @@ You can gather most of these through following the Pangolin Docs on the topic, [
 
 ## Final notes
 
-This project is not affiliated with Fosrl, the Newt Maintainer Team or the Pangolin maintainer team, but simply a community effort.  
+This project is not affiliated with Fosrl, the Pangolin-CLI Maintainer Team or the Pangolin maintainer team, but simply a community effort.  
