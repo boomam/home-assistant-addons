@@ -8,6 +8,12 @@ The letter & number are bug fix releases where said issue is not with Pangolin-C
 
 # Change Log
 
+## Pangolin-CLI 0.17.0.b
+* Corrected `run.sh` issue.
+
+## Pangolin-CLI 0.17.0.a
+* Corrected readme/changelog wording.
+
 ## Pangolin-CLI 0.17.0
 * Pangolin-CLI 0.17.0
 * Base 21.0.5
