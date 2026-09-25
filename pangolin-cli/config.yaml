@@ -1,4 +1,4 @@
-name: "Pangolin-CLI Add-on"
+name: "Pangolin-CLI"
 version: null
 slug: "pangolin-cli"
 description: "Pangolin-CLI client for Home Assistant, for Pangolin connectivity"
