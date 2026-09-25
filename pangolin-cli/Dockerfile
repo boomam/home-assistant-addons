@@ -18,13 +18,13 @@ RUN apk add --no-cache bash curl jq
 # Detect system architecture and download the correct PANGOLIN_CLI binary
 RUN ARCH=$(uname -m) && \
     if [ "$ARCH" = "x86_64" ]; then \
-        curl -fsSL -o /usr/bin/pangolin-cli https://github.com/fosrl/pangolin-cli/releases/download/${PANGOLIN_CLI_VERSION}/pangolin-cli_linux_amd64; \
+        curl -fsSL -o /usr/bin/pangolin-cli https://github.com/fosrl/cli/releases/download/${PANGOLIN_CLI_VERSION}/pangolin-cli_linux_amd64; \
     elif [ "$ARCH" = "aarch64" ]; then \
-        curl -fsSL -o /usr/bin/pangolin-cli https://github.com/fosrl/pangolin-cli/releases/download/${PANGOLIN_CLI_VERSION}/pangolin-cli_linux_arm64; \
+        curl -fsSL -o /usr/bin/pangolin-cli https://github.com/fosrl/cli/releases/download/${PANGOLIN_CLI_VERSION}/pangolin-cli_linux_arm64; \
     elif [ "$ARCH" = "armv7l" ]; then \
-        curl -fsSL -o /usr/bin/pangolin-cli https://github.com/fosrl/pangolin-cli/releases/download/${PANGOLIN_CLI_VERSION}/pangolin-cli_linux_arm32; \
+        curl -fsSL -o /usr/bin/pangolin-cli https://github.com/fosrl/cli/releases/download/${PANGOLIN_CLI_VERSION}/pangolin-cli_linux_arm32; \
     elif [ "$ARCH" = "armv6l" ]; then \
-        curl -fsSL -o /usr/bin/pangolin-cli https://github.com/fosrl/pangolin-cli/releases/download/${PANGOLIN_CLI_VERSION}/pangolin-cli_linux_arm32v6; \
+        curl -fsSL -o /usr/bin/pangolin-cli https://github.com/fosrl/cli/releases/download/${PANGOLIN_CLI_VERSION}/pangolin-cli_linux_arm32v6; \
     else \
         echo "ERROR: Unsupported architecture: $ARCH"; exit 1; \
     fi && \
