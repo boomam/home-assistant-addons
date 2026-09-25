@@ -56,7 +56,7 @@ while true; do
     # Remove stale health file before starting
     rm -f "$HEALTH_FILE"
 
-    /usr/bin/pangolin-cli
+    /usr/bin/pangolin
 
     echo "Pangolin-CLI stopped! Waiting 5 seconds before reconnecting..."
     sleep 5
