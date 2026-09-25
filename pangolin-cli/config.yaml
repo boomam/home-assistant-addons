@@ -1,5 +1,5 @@
 name: "Pangolin-CLI"
-version: 0.17.0.f
+version: 0.17.0.g
 slug: "pangolin-cli"
 description: "Pangolin-CLI client for Home Assistant, for Pangolin connectivity"
 icon: "icon.png"
