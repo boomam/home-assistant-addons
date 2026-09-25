@@ -4,7 +4,7 @@ set -e
 echo "Starting Pangolin-CLI..."
 
 CONFIG_PATH="/data/options.json"
-HEALTH_FILE="${HEALTH_FILE:-/tmp/healthy}"
+HEALTH_FILE="${HEALTH_FILE:-/tmp/pangolin-cli/healthy}"
 
 export HEALTH_FILE
 
