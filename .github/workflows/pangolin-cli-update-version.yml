@@ -1,0 +1,80 @@
+name: Update Pangolin-CLI Version
+
+on:
+  schedule:
+    - cron: "0 4 * * 5"   # run every Wednesday
+  workflow_dispatch:
+
+jobs:
+  pangolin-cli-update-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+
+      - name: Get latest Pangolin-CLI release
+        id: pangolin-cli
+        run: |
+          latest=$(curl -s https://api.github.com/repos/fosrl/pangolin-cli/releases/latest | jq -r .tag_name)
+          latest=${latest#v}
+          echo "latest=$latest" >> $GITHUB_OUTPUT
+
+      - name: Get current version
+        id: current
+        run: |
+          current=$(grep "PANGOLIN_CLI_VERSION:" newt/build.yaml | awk '{print $2}')
+          echo "current=$current" >> $GITHUB_OUTPUT
+
+      - name: Check if update is needed
+        id: check
+        run: |
+          if [ "${{ steps.pangolin-cli.outputs.latest }}" = "${{ steps.current.outputs.current }}" ]; then
+            echo "update=false" >> $GITHUB_OUTPUT
+          else
+            echo "update=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update build.yaml
+        if: steps.check.outputs.update == 'true'
+        run: |
+          sed -i "s/^  PANGOLIN_CLI_VERSION:.*/  PANGOLIN_CLI_VERSION: ${{ steps.pangolin-cli.outputs.latest }}/" pangolin-cli/build.yaml
+      
+      - name: Update CHANGELOG.md
+        if: steps.check.outputs.update == 'true'
+        run: |
+          old_version=${{ steps.current.outputs.current }}
+          new_version=${{ steps.pangolin-cli.outputs.latest }}
+
+          awk -v old="$old_version" -v new="$new_version" '
+          /^# Change Log$/ {
+            print
+            print ""
+            print "## Pangolin-CLI " new
+            print "* Updated Pangolin-CLI from " old " to " new
+            print ""
+            next
+          }
+          { print }
+          ' pangolin-cli/CHANGELOG.md > pangolin-cli/CHANGELOG.tmp
+
+          mv pangolin-cli/CHANGELOG.tmp pangolin-cli/CHANGELOG.md
+
+      - name: Update config.yaml
+        if: steps.check.outputs.update == 'true'
+        run: |
+          new_version=${{ steps.pangolin-cli.outputs.latest }}
+          sed -i "s/^version:.*/version: $new_version/" pangolin-cli/config.yaml
+
+      - name: Commit changes
+        if: steps.check.outputs.update == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pangolin-cli/build.yaml pangolin-cli/CHANGELOG.md pangolin-cli/config.yaml
+          git commit -m "Update Pangolin-CLI to ${{ steps.pangolin-cli.outputs.latest }}"
+          git push
+
+      - name: No update needed
+        if: steps.check.outputs.update == 'false'
+        run: echo "✅ Pangolin-CLI is already up to date (version ${{ steps.current.outputs.current }})"
