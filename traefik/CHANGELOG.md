@@ -8,6 +8,9 @@ The letter & number are bug fix releases where said issue is not with Traefik, b
 
 # Change Log
 
+## Traefik 3.7.13.b
+* Added `auth_api: true`, Thank you to [AndTon35](https://github.com/AndTon35bis)
+
 ## Traefik 3.7.13.a
 * Update base images to version 21.0.5
 
@@ -53,7 +56,7 @@ The letter & number are bug fix releases where said issue is not with Traefik, b
 
 
 ## Traefik 3.7.1.a
-* Added ability to use custom config file - Thank you to [@ms5](https://github.com/ms5
+* Added ability to use custom config file - Thank you to [@ms5](https://github.com/ms5)
   
 ## Traefik 3.7.1
 * Updated Traefik from 3.7.0 to 3.7.1
