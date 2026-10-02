@@ -1,4 +1,3 @@
-```yaml
 name: Update Pangolin-CLI Version
 
 on:
@@ -121,4 +120,3 @@ jobs:
       - name: No update needed
         if: steps.check.outputs.update == 'false'
         run: echo "Pangolin-CLI is already up to date (version ${{ steps.current.outputs.current }})"
-```
