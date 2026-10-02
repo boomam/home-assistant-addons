@@ -8,6 +8,10 @@ The letter & number are bug fix releases where said issue is not with Pangolin-C
 
 # Change Log
 
+## Pangolin-CLI 0.18.1
+* Updated Pangolin-CLI from 0.18.0 to 0.18.1
+
+
 ## Pangolin-CLI 0.17.0
 * Pangolin-CLI 0.17.0
 * Base 21.0.5
