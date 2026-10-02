@@ -64,6 +64,15 @@ jobs:
         run: |
           sed -i "s/^  PANGOLIN_CLI_VERSION:.*/  PANGOLIN_CLI_VERSION: ${{ steps.pangolin-cli.outputs.latest }}/" pangolin-cli/build.yaml
 
+
+      - name: Inspect CHANGELOG.md
+        if: steps.check.outputs.update == 'true'
+        run: |
+          echo "CHANGELOG headings:"
+          grep -n '^#' pangolin-cli/CHANGELOG.md || true
+
+
+
       - name: Update CHANGELOG.md
         if: steps.check.outputs.update == 'true'
         run: |
