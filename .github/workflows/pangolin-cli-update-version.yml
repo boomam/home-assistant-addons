@@ -39,7 +39,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          current=$(awk '/^[[:space:]]*PANGOLIN_CLI_VERSION:/ {print $2; exit}' pangolin-cli/build.yaml)
+          current=$(awk '/^[[:space:]]*PANGOLIN_CLI_VERSION:/ {print $2; exit}' pangolin-cli/build.yaml | xargs)
 
           if [ -z "$current" ] || [ "$current" = "null" ]; then
             echo "ERROR: Could not determine a valid current Pangolin-CLI version from build.yaml"
@@ -72,29 +72,21 @@ jobs:
           old_version="${{ steps.current.outputs.current }}"
           new_version="${{ steps.pangolin-cli.outputs.latest }}"
 
-          awk -v old="$old_version" -v new="$new_version" '
-          BEGIN {
-            updated = 0
-          }
+          if ! grep -q '^# Change Log$' pangolin-cli/CHANGELOG.md; then
+            echo "ERROR: Could not find '# Change Log' in pangolin-cli/CHANGELOG.md"
+            exit 1
+          fi
 
+          awk -v old="$old_version" -v new="$new_version" '
           /^# Change Log$/ {
             print
             print ""
             print "## Pangolin-CLI " new
             print "* Updated Pangolin-CLI from " old " to " new
             print ""
-            updated = 1
             next
           }
-
           { print }
-
-          END {
-            if (updated == 0) {
-              print "ERROR: Could not find '# Change Log' in pangolin-cli/CHANGELOG.md" > "/dev/stderr"
-              exit 1
-            }
-          }
           ' pangolin-cli/CHANGELOG.md > pangolin-cli/CHANGELOG.tmp
 
           mv pangolin-cli/CHANGELOG.tmp pangolin-cli/CHANGELOG.md
