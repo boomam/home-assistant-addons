@@ -39,10 +39,11 @@ jobs:
         run: |
           set -euo pipefail
 
-          current=$(grep "^  PANGOLIN_CLI_VERSION:" pangolin-cli/build.yaml | awk '{print $2}')
+          current=$(awk '/^[[:space:]]*PANGOLIN_CLI_VERSION:/ {print $2; exit}' pangolin-cli/build.yaml)
 
-          if [ -z "$current" ]; then
-            echo "ERROR: Could not determine current Pangolin-CLI version"
+          if [ -z "$current" ] || [ "$current" = "null" ]; then
+            echo "ERROR: Could not determine a valid current Pangolin-CLI version from build.yaml"
+            echo "Found: '$current'"
             exit 1
           fi
 
