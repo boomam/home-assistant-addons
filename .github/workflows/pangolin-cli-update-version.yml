@@ -67,22 +67,39 @@ jobs:
       - name: Update CHANGELOG.md
         if: steps.check.outputs.update == 'true'
         run: |
+          set -euo pipefail
+
           old_version="${{ steps.current.outputs.current }}"
           new_version="${{ steps.pangolin-cli.outputs.latest }}"
 
           awk -v old="$old_version" -v new="$new_version" '
+          BEGIN {
+            updated = 0
+          }
+
           /^# Change Log$/ {
             print
             print ""
             print "## Pangolin-CLI " new
             print "* Updated Pangolin-CLI from " old " to " new
             print ""
+            updated = 1
             next
           }
+
           { print }
+
+          END {
+            if (updated == 0) {
+              print "ERROR: Could not find '# Change Log' in pangolin-cli/CHANGELOG.md" > "/dev/stderr"
+              exit 1
+            }
+          }
           ' pangolin-cli/CHANGELOG.md > pangolin-cli/CHANGELOG.tmp
 
           mv pangolin-cli/CHANGELOG.tmp pangolin-cli/CHANGELOG.md
+
+          echo "Updated CHANGELOG.md from $old_version to $new_version"
 
       - name: Update config.yaml
         if: steps.check.outputs.update == 'true'
