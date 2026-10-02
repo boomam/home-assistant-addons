@@ -8,7 +8,7 @@ The letter & number are bug fix releases where said issue is not with Traefik, b
 
 # Change Log
 
-## Traefik 3.7.13-b
+## Traefik 3.7.13.b
 * Added `auth_api: true`, Thank you to [AndTon35](https://github.com/AndTon35bis)
 
 ## Traefik 3.7.13.a
