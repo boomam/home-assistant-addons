@@ -8,6 +8,10 @@ The letter & number are bug fix releases where said issue is not with Newt, but 
 
 # Change Log
 
+## Newt 1.18.1
+* Updated Newt from 1.18.0 to 1.18.1
+
+
 ## Newt 1.18.0
 * Updated Newt from 1.17.0 to 1.18.0
 
