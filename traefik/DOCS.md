@@ -68,6 +68,12 @@ This add-on provides three Traefik entrypoints.
 - `websecure` on port 443.
 - `traefik` on port 8080.
 
+### Plugins and the watchdog
+
+Traefik downloads its plugins from `plugins.traefik.io` on every start. If that fails, for example because DNS is not available yet, Traefik disables all plugins and every router that uses them, but keeps running ([traefik/traefik#13005](https://github.com/traefik/traefik/issues/13005)).
+The add-on detects this through the API on port 8080 inside the container, which the built-in configuration enables and a custom configuration must keep (`api.insecure: true`). It then waits until `plugins.traefik.io` is reachable and stops with an error.
+Enable the add-on's **Watchdog** option so that Home Assistant restarts it automatically.
+
 ## Configuration
 ### Option `log_level` (required)
 
