@@ -1,6 +1,6 @@
 # This file defines how things are displayed in HA, options that show, etc.
 name: Traefik
-version: 3.7.16
+version: 3.7.16.a
 slug: traefik
 description: |
   Traefik is a modern HTTP reverse proxy and load balancer that makes deploying microservices easy. 
@@ -19,10 +19,12 @@ ports:
   80/tcp: 80
   443/tcp: 443
   8080/tcp: 8080
+  8082/tcp: null
 ports_description:
   80/tcp: HTTP
   443/tcp: HTTPS
   8080/tcp: traefik dashboard
+  8082/tcp: Prometheus metrics (entrypoint metrics, when the metrics option is on)
 ingress: true
 ingress_entry: dashboard/
 #ingress_port: 443
@@ -38,6 +40,7 @@ map:
 options:
   log_level: ERROR
   access_logs: false
+  metrics: false
   forwarded_headers_insecure: false
   insecure_skip_verify: false
   dynamic_configuration_path: "/config/traefik/"
@@ -56,6 +59,7 @@ options:
 schema:
   log_level: list(TRACE|DEBUG|INFO|WARN|ERROR|FATAL|PANIC)
   access_logs: bool
+  metrics: bool?
   forwarded_headers_insecure: bool
   insecure_skip_verify: bool
   proxy_protocol_trusted_ips:
