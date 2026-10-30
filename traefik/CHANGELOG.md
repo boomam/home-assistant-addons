@@ -8,6 +8,10 @@ The letter & number are bug fix releases where said issue is not with Traefik, b
 
 # Change Log
 
+## Traefik 3.7.16.a
+* Added the `metrics` option: Prometheus metrics on a new entrypoint `metrics`, container port 8082 (not exposed by default)
+* Documented choosing the host ports of the dashboard (8080) and metrics (8082), or leaving them unexposed, in the Network section
+
 ## Traefik 3.7.16
 * Updated Traefik from 3.7.14 to 3.7.16
 

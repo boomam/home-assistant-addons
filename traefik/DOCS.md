@@ -91,6 +91,11 @@ By default, the `log_level` is set to `error`, which is the recommended setting 
 Whether to enable access logging to standard out.  
 These logs will be shown in the Hass.io Add-On panel.
 
+### Option `metrics`
+
+Turns on Traefik's Prometheus metrics, served on the entrypoint `metrics` (container port 8082, see
+[Entrypoints](#entrypoints)). Off by default.
+
 ### Option `forwarded_headers_insecure` (required)
 
 Enables insecure forwarding headers.  
@@ -159,3 +164,16 @@ Port 443 is used for HTTPS access.
 
 ### EntryPoint `traefik`, port `8080`
 Port 8080 is used for access to the Traefik dashboard.
+
+### EntryPoint `metrics`, port `8082`
+Port 8082 serves Prometheus metrics at `/metrics` when the `metrics` option is on.
+
+### Choosing and exposing the ports
+The host ports are set in the add-on's **Network** section: each container port can be mapped to
+any free host port, or left empty so it is not exposed to the network at all. The defaults expose
+the dashboard (8080) and do not expose metrics (8082). Other add-ons reach both without exposing
+them, at the add-on's host name (shown on its Info page), for example `http://<hostname>:8082/metrics`.
+
+With `custom_config.use_config_file`, the static configuration is yours: define the entrypoints on
+the same container ports (for example `metrics: {address: ":8082"}` and
+`metrics: {prometheus: {entryPoint: metrics}}`) for the Network section to apply.
