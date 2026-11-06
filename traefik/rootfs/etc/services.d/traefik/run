@@ -8,6 +8,35 @@ else
     bashio::log.info "Extracted variables ${ENV_VARS}"
 fi
 
+# Traefik disables all plugins, and every router using them, when it cannot download them
+# at startup, but keeps running (traefik/traefik#13005). Stop the app instead, so it shows
+# as failed and the watchdog can restart it. Wait for the plugin registry first: the
+# watchdog gives up after 10 restarts in 30 minutes, which a short outage would use up.
+check_plugins() {
+  local counts
+  for _ in $(seq 60); do
+    sleep 2
+    # "<plugin middlewares> <plugin middlewares Traefik does not know>". A middleware's status
+    # only reflects the routers using it, so look for the unknown-type error, not for "disabled".
+    counts=$(curl -sf http://localhost:8080/api/rawdata | jq -r '
+      [(.middlewares, .tcpMiddlewares) | values[] | select(.plugin)]
+      | "\(length) \(map(select(any(.error[]?; contains("invalid middleware type")))) | length)"') || continue
+    [[ "${counts}" == "0 0" ]] && continue
+    if [[ "${counts}" != *" 0" ]]; then
+      bashio::log.error "Plugin middlewares are unknown to Traefik, plugins failed to load."
+      until curl -s -o /dev/null --max-time 10 https://plugins.traefik.io/; do
+        bashio::log.error "Waiting for plugins.traefik.io before stopping the app..."
+        sleep 30
+      done
+      bashio::log.error "Stopping the app."
+      echo -n 1 > /run/s6-linux-init-container-results/exitcode
+      exec /run/s6/basedir/bin/halt
+    fi
+    return
+  done
+}
+check_plugins &
+
 bashio::log.info "Starting Traefik..."
 
 if bashio::config.true 'custom_config.use_config_file'; then
