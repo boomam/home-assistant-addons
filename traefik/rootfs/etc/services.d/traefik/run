@@ -8,10 +8,11 @@ else
     bashio::log.info "Extracted variables ${ENV_VARS}"
 fi
 
-# Traefik disables all plugins, and every router using them, when it cannot download them
-# at startup, but keeps running (traefik/traefik#13005). Stop the app instead, so it shows
-# as failed and the watchdog can restart it. Wait for the plugin registry first: the
-# watchdog gives up after 10 restarts in 30 minutes, which a short outage would use up.
+# Traefik disables all plugins, and every router using them, when it cannot load them at
+# startup, but keeps running (traefik/traefik#13005). The plugins are normally local (see
+# fetch_plugin), so this is a fallback: stop the app, so it shows as failed and the watchdog
+# can restart it with fresh downloads. Wait for the plugin registry first: the watchdog gives
+# up after 10 restarts in 30 minutes, which a short outage would use up.
 check_plugins() {
   local counts
   for _ in $(seq 60); do
@@ -28,14 +29,59 @@ check_plugins() {
         bashio::log.error "Waiting for plugins.traefik.io before stopping the app..."
         sleep 30
       done
-      bashio::log.error "Stopping the app."
+      bashio::log.error "Removing the plugins on disk and stopping the app."
+      rm -rf /data/plugins-local
       echo -n 1 > /run/s6-linux-init-container-results/exitcode
       exec /run/s6/basedir/bin/halt
     fi
     return
   done
 }
-check_plugins &
+
+# Traefik downloads experimental.plugins from plugins.traefik.io on every start, and a failed
+# download disables them (traefik/traefik#13005). The add-on downloads them itself into
+# /data/plugins-local instead, skips a version already there, keeps the copy on disk when the
+# registry is unreachable, and runs Traefik with a copy of the configuration that loads them as
+# experimental.localPlugins, from ./plugins-local.
+fetch_plugin() {   # fetch_plugin <moduleName> <version>
+  local dir="/data/plugins-local/src/$1" tmp root
+  [[ "$(cat "${dir}/.plugin-version" 2>/dev/null)" == "$2" ]] && return 0
+  tmp=$(mktemp -d)
+  # Archives differ: one directory, or module-proxy paths (github.com/x/y@v1/). The plugin
+  # root is the shallowest directory holding .traefik.yml.
+  if curl -sfL --max-time 60 -o "${tmp}/plugin.zip" "https://plugins.traefik.io/public/download/$1/$2" \
+      && unzip -q "${tmp}/plugin.zip" -d "${tmp}/x" \
+      && root=$(find "${tmp}/x" -name .traefik.yml | awk '{ print length, $0 }' | sort -n | head -1 | cut -d' ' -f2-) \
+      && [[ -n "${root}" ]]; then
+    rm -rf "${dir}"
+    mkdir -p "$(dirname "${dir}")"
+    mv "$(dirname "${root}")" "${dir}"
+    echo "$2" > "${dir}/.plugin-version"
+    bashio::log.info "Downloaded plugin $1 $2"
+  elif [[ -f "${dir}/.traefik.yml" ]]; then
+    bashio::log.warning "Cannot download plugin $1 $2; using $(cat "${dir}/.plugin-version" 2>/dev/null) from disk"
+  else
+    rm -rf "${tmp}"
+    return 1
+  fi
+  rm -rf "${tmp}"
+}
+
+use_local_plugins() {   # use_local_plugins <static config file>; prints the file to run Traefik with
+  local plugins name module version
+  plugins=$(gomplate -f /etc/traefik/plugins-manifest.gotmpl -d "config=file://$1?type=application/yaml") || return 1
+  if [[ -z "${plugins//[[:space:]]/}" ]]; then echo "$1"; return; fi
+  while read -r name module version; do
+    [[ -n "${name}" ]] || continue
+    until fetch_plugin "${module}" "${version}" >&2; do
+      bashio::log.error "Cannot download plugin ${module} ${version} and it is not on disk; retrying in 30 seconds..." >&2
+      sleep 30
+    done
+  done <<< "${plugins}"
+  gomplate -f /etc/traefik/plugins-local.gotmpl -d "config=file://$1?type=application/yaml" -o /tmp/traefik-static.yaml || return 1
+  ln -sfn /data/plugins-local plugins-local   # Traefik looks for ./plugins-local
+  echo /tmp/traefik-static.yaml
+}
 
 bashio::log.info "Starting Traefik..."
 
@@ -54,6 +100,8 @@ if bashio::config.true 'custom_config.use_config_file'; then
     exit 1
   fi
 
+  CONFIG_FILE=$(use_local_plugins "${CONFIG_FILE}") || exit 1
+  check_plugins &
   bashio::log.info "Running Traefik with config file: ${CONFIG_FILE}"
   if [ -z "$ENV_VARS" ]; then
     bashio::log.info "Running Traefik without env_vars"
@@ -63,6 +111,7 @@ if bashio::config.true 'custom_config.use_config_file'; then
   fi
 
 else
+  check_plugins &
   if [ -z "$ENV_VARS" ]; then
       bashio::log.info "Running Traefik without env_vars"
       exec /usr/local/bin/traefik

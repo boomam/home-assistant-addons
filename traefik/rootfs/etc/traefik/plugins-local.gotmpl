@@ -1,0 +1,10 @@
+{{- /* The static configuration with experimental.plugins turned into experimental.localPlugins, which
+       Traefik loads from ./plugins-local without contacting the plugin registry. Only used when
+       experimental.plugins is set. coll.Merge merges deeply, so the replaced keys are omitted first. */ -}}
+{{- $config := ds "config" -}}
+{{- $local := dict -}}
+{{- range $name, $plugin := $config.experimental.plugins -}}
+{{- $local = coll.Merge (dict $name (dict "moduleName" $plugin.moduleName)) $local -}}
+{{- end -}}
+{{- $experimental := coll.Merge (dict "localPlugins" $local) (coll.Omit "plugins" $config.experimental) -}}
+{{- coll.Merge (dict "experimental" $experimental) (coll.Omit "experimental" $config) | data.ToYAML -}}

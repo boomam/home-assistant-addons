@@ -71,7 +71,10 @@ This add-on provides three Traefik entrypoints.
 ### Plugins and the watchdog
 
 Traefik downloads its plugins from `plugins.traefik.io` on every start. If that fails, for example because DNS is not available yet, Traefik disables all plugins and every router that uses them, but keeps running ([traefik/traefik#13005](https://github.com/traefik/traefik/issues/13005)).
-The add-on detects this through the API on port 8080 inside the container, which the built-in configuration enables and a custom configuration must keep (`api.insecure: true`). It then waits until `plugins.traefik.io` is reachable and stops with an error.
+
+With a custom config file, the add-on therefore downloads the plugins listed in `experimental.plugins` itself, into `/data/plugins-local`, before starting Traefik. It skips a plugin already there at the configured version and keeps the copy on disk when the download fails. With neither, it retries every 30 seconds. Traefik then runs with a copy of the configuration in which `experimental.plugins` becomes `experimental.localPlugins`, so it loads the plugins from disk and never contacts `plugins.traefik.io` itself. Keep configuring plugins under `experimental.plugins` with `moduleName` and `version`; to update one, change its version and restart the add-on. `/data` is part of the add-on's backups.
+
+As a fallback, the add-on checks through the API on port 8080 inside the container, which the built-in configuration enables and a custom configuration must keep (`api.insecure: true`), whether a plugin still failed to load. If so, it waits until `plugins.traefik.io` is reachable, removes the plugins on disk and stops with an error.
 Enable the add-on's **Watchdog** option so that Home Assistant restarts it automatically.
 
 ## Configuration

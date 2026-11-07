@@ -8,6 +8,10 @@ The letter & number are bug fix releases where said issue is not with Traefik, b
 
 # Change Log
 
+## Traefik 3.7.19.d
+* With a custom config file, the add-on downloads the plugins in `experimental.plugins` itself, into `/data/plugins-local`, and runs Traefik with a copy of the configuration that loads them as `experimental.localPlugins`. A version already on disk is not downloaded again, and when `plugins.traefik.io` is unreachable the copy on disk is used, so plugins keep working when DNS or the registry is down at startup. See [traefik/traefik#13005](https://github.com/traefik/traefik/issues/13005).
+* When a plugin still fails to load, the add-on removes the plugins on disk before stopping, so the watchdog restart downloads them again.
+
 ## Traefik 3.7.19.c
 * Removed deprecated architectures from deployment.
 
