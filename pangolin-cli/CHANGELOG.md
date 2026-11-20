@@ -8,6 +8,9 @@ The letter & number are bug fix releases where said issue is not with Pangolin-C
 
 # Change Log
 
+## Pangolin-CLI 0.23.0.b
+* Fix for changes to how HA deploy and associated syntaxes.
+
 ## Pangolin-CLI 0.23.0.a
 * Removed deprecated architectures from deployment.
 
