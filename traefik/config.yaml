@@ -1,10 +1,6 @@
 # This file defines how things are displayed in HA, options that show, etc.
 name: Traefik
-<<<<<<< HEAD
-version: 3.7.19.a
-=======
 version: 3.7.19.b
->>>>>>> 040944d08c3aa8178f762e1aa7724c67f202db2a
 slug: traefik
 description: |
   Traefik is a modern HTTP reverse proxy and load balancer that makes deploying microservices easy. 
