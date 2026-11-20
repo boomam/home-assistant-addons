@@ -10,6 +10,9 @@ The letter & number are bug fix releases where said issue is not with Traefik, b
 
 ## Traefik 3.7.19.a
 * The add-on now stops with an error when Traefik plugins fail to load, so the watchdog can restart it. See [traefik/traefik#13005](https://github.com/traefik/traefik/issues/13005).
+* Added the `metrics` option: Prometheus metrics on a new entrypoint `metrics`, container port 8082 (not exposed by default)
+* Documented choosing the host ports of the dashboard (8080) and metrics (8082), or leaving them unexposed, in the Network section
+
 
 ## Traefik 3.7.17
 * Updated Traefik from 3.7.16 to 3.7.17
