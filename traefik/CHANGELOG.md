@@ -1,0 +1,206 @@
+# Updates
+Traefik version should automatically update through a GitHub Action.
+Base Image will be a manual process for the time being.
+
+# Versioning
+First three digits are Traefik's version number.  
+The letter & number are bug fix releases where said issue is not with Traefik, but with this template.  
+
+# Change Log
+
+## Traefik 3.7.19.b
+* The add-on now stops with an error when Traefik plugins fail to load, so the watchdog can restart it. See [traefik/traefik#13005](https://github.com/traefik/traefik/issues/13005).
+* Added the `metrics` option: Prometheus metrics on a new entrypoint `metrics`, container port 8082 (not exposed by default)
+* Documented choosing the host ports of the dashboard (8080) and metrics (8082), or leaving them unexposed, in the Network section
+
+## Traefik 3.7.19.a
+Updated base image from 21.0.5 to 21.0.11
+
+## Traefik 3.7.19
+* Updated Traefik from 3.7.18 to 3.7.19
+
+
+## Traefik 3.7.18
+* Updated Traefik from 3.7.17 to 3.7.18
+
+
+## Traefik 3.7.17
+* Updated Traefik from 3.7.16 to 3.7.17
+
+
+## Traefik 3.7.16
+* Updated Traefik from 3.7.14 to 3.7.16
+
+
+## Traefik 3.7.14
+* Updated Traefik from 3.7.13 to 3.7.14
+
+
+## Traefik 3.7.13.b
+* Added `auth_api: true`, Thank you to [AndTon35](https://github.com/AndTon35bis)
+
+## Traefik 3.7.13.a
+* Update base images to version 21.0.5
+
+## Traefik 3.7.13
+* Updated Traefik from 3.7.12 to 3.7.13
+
+
+## Traefik 3.7.12
+* Updated Traefik from 3.7.11 to 3.7.12
+
+
+## Traefik 3.7.11
+* Updated Traefik from 3.7.10 to 3.7.11
+
+
+## Traefik 3.7.10
+* Updated Traefik from 3.7.9 to 3.7.10
+
+
+## Traefik 3.7.9
+* Updated Traefik from 3.7.8 to 3.7.9
+
+
+## Traefik 3.7.8
+* Updated Traefik from 3.7.7 to 3.7.8
+
+
+## Traefik 3.7.7
+* Updated Traefik from 3.7.6 to 3.7.7
+
+
+## Traefik 3.7.6
+* Updated Traefik from 3.7.5 to 3.7.6
+
+
+## Traefik 3.7.5
+* Updated Traefik from 3.7.4 to 3.7.5
+
+
+## Traefik 3.7.4
+* Updated Traefik from 3.7.1 to 3.7.4
+
+
+
+## Traefik 3.7.1.a
+* Added ability to use custom config file - Thank you to [@ms5](https://github.com/ms5)
+  
+## Traefik 3.7.1
+* Updated Traefik from 3.7.0 to 3.7.1
+
+
+## Traefik 3.7.0
+* Updated Traefik from 3.6.14 to 3.7.0
+
+
+## Traefik 3.6.14.a
+* Updated base image from 20.0.1 to 20.1.0.
+
+## Traefik 3.6.14
+* Updated Traefik from 3.6.13 to 3.6.14
+
+
+## Traefik 3.6.13
+* Updated Traefik from 3.6.12 to 3.6.13
+
+
+## Traefik 3.6.12
+* Updated Traefik from 3.6.11 to 3.6.12
+
+
+## Traefik 3.6.11.aa
+* Updated base image from v19.0.0 to v20.0.1
+
+## Traefik 3.6.11
+* Updated Traefik from 3.6.10 to 3.6.11
+
+
+## Traefik 3.6.10
+* Updated Traefik from 3.6.9 to 3.6.10
+
+
+## Traefik 3.6.9
+* Updated Traefik from 3.6.8 to 3.6.9
+
+
+## Traefik 3.6.8
+* Updated Traefik from 3.6.7 to 3.6.8
+
+
+## Traefik 3.6.7
+* Updated Traefik from 3.6.6 to 3.6.7
+
+
+## Traefik 3.6.6
+* Updated Traefik from 3.6.5 to 3.6.6
+### 3.6.6.a
+* Added ProxyProtocol.
+
+## Traefik 3.6.5
+* Updated Traefik from 3.6.4 to 3.6.5
+
+## Traefik 3.6.4
+* Updated Traefik from 3.6.2 to 3.6.4
+* Updated base iamge from 18.2.1 to 19.0.0
+
+## Traefik 3.6.2
+* Updated Traefik from 3.6.1 to 3.6.2
+* Updated base image from 18.1.3 to 18.2.1
+* Updated Traefik from 3.6.0 to 3.6.1
+
+## Traefik 3.6.1
+
+## Traefik 3.6.0
+* Updated Traefik from 3.5.4 to 3.6.0
+
+## Traefik 3.5.4
+* Updated Traefik from 3.5.3 to 3.5.4
+
+## Traefik 3.5.3
+* Updated Traefik from 3.5.2 to 3.5.3
+* Updated base image from v18.1.0 to 18.1.3
+
+## 3.5.2
+### 3.5.2.a
+* Updated Traefik from 3.5.1 to 3.5.2
+* Updated base image from v18.1.0 to 18.1.1
+
+## 3.5.1
+### 3.5.1.b
+* Added `insecure_skip_verify` option - Thank you to [@lalexdotcom](https://github.com/lalexdotcom)
+
+### 3.5.1.a
+* Updated Traefik from 3.5.0 to 3.5.1
+* Updated base image from v18.0.3 to 18.1.0
+
+## 3.5.0
+### 3.5.0.a
+* Updated Traefik from 3.3.4 to 3.5.0
+* Updated base image from v17.2.2 to 18.0.3
+
+## 3.3.4
+### 3.3.4.h
+* sidebar fix testing.
+
+### 3.3.4.e
+* Adjusted sidebar streaming to help with rendering of traefik dashboard through sidebar.
+
+### 3.3.4.c
+* Fixed log level issues with (most) log levels.
+* Edited base template for LE to include all needed variables for CF.
+  
+### 3.3.4.b
+* Fixed `Unknown Level String` when setting log level.
+* Added 8080/tcp to ports to allow direct access to Traefik Dashboard (http://IP_Address:8080/dashboard/)
+* Added notes and references to original fork/dev.
+
+### 3.3.4.a
+* Updated docs and guidance that displays in HA.
+* Updated references to old repo.
+* Updated name of entrypoints to match Traefik default standards.
+
+## 3.3.4 (Initial Release)
+* 📈 Traefik v3.3.4
+* 📈 HASSIO Base v17.2.2
+* Change Log versioning changed to match upstream Traefik versioning.
