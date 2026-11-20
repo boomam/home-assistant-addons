@@ -1,5 +1,5 @@
 name: "Pangolin-CLI"
-version: 0.23.0.a
+version: 0.23.0.b
 slug: "pangolin-cli"
 description: "Pangolin-CLI client for Home Assistant, for Pangolin connectivity"
 icon: "icon.png"
@@ -26,7 +26,7 @@ schema:
   custom_env_vars:
     - "match(^[A-Z_][A-Z0-9_]*=.+$)"
 map:
-  - config:rw
+  - homeassistant_config:rw
 hassio_api: true
 homeassistant_api: false
 auth_api: false
