@@ -77,7 +77,15 @@ use_local_plugins() {   # use_local_plugins <static config file>; prints the fil
       return 1
     fi
     if ! fetch_plugin "${module}" "${version}" >&2; then
-      # Stop the app with an error, as check_plugins does, so the watchdog restarts it.
+      # Stop the app with an error, as check_plugins does, so the watchdog restarts it. With
+      # wait_for_plugin_registry on (the default), first wait until the registry is reachable,
+      # so a short outage does not use up the watchdog's restarts.
+      if [[ "$(bashio::config 'wait_for_plugin_registry' 'true')" == "true" ]]; then
+        until curl -s -o /dev/null --max-time 10 https://plugins.traefik.io/; do
+          bashio::log.error "Waiting for plugins.traefik.io before stopping the app..." >&2
+          sleep 30
+        done
+      fi
       bashio::log.error "Cannot download plugin ${module} ${version} and it is not on disk. Stopping the app so the watchdog restarts it." >&2
       echo -n 1 > /run/s6-linux-init-container-results/exitcode
       /run/s6/basedir/bin/halt
