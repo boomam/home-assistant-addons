@@ -9,6 +9,9 @@ The letter & number are bug fix releases where said issue is not with Newt, but 
 # Change Log
 
 ## Newt 1.20.1
+* Removed deprecated architectures from deployment.
+
+## Newt 1.20.1
 * Updated Newt from 1.20.0 to 1.20.1
 
 
