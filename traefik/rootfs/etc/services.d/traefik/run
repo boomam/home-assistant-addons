@@ -42,7 +42,7 @@ check_plugins() {
 # download disables them (traefik/traefik#13005). The add-on downloads them itself into
 # /data/plugins-local instead and skips a version already there, so a restart runs without the
 # registry. A version not on disk is never replaced by another one: fetch_plugin fails until it
-# can be downloaded, and use_local_plugins retries. Traefik then runs with a copy of the
+# can be downloaded, and use_local_plugins stops the app so the watchdog restarts it. Traefik runs with a copy of the
 # configuration that loads them as experimental.localPlugins, from ./plugins-local.
 fetch_plugin() {   # fetch_plugin <moduleName> <version>
   local dir="/data/plugins-local/src/$1" tmp root installed=1
@@ -76,10 +76,13 @@ use_local_plugins() {   # use_local_plugins <static config file>; prints the fil
       bashio::log.error "Invalid plugin moduleName ${module}" >&2
       return 1
     fi
-    until fetch_plugin "${module}" "${version}" >&2; do
-      bashio::log.error "Cannot download plugin ${module} ${version} and it is not on disk; retrying in 30 seconds..." >&2
-      sleep 30
-    done
+    if ! fetch_plugin "${module}" "${version}" >&2; then
+      # Stop the app with an error, as check_plugins does, so the watchdog restarts it.
+      bashio::log.error "Cannot download plugin ${module} ${version} and it is not on disk. Stopping the app so the watchdog restarts it." >&2
+      echo -n 1 > /run/s6-linux-init-container-results/exitcode
+      /run/s6/basedir/bin/halt
+      return 1
+    fi
   done <<< "${plugins}"
   gomplate -f /etc/traefik/plugins-local.gotmpl -d "config=file://$1?type=${type}" -o /tmp/traefik-static.yaml || return 1
   ln -sfn /data/plugins-local plugins-local || return 1   # Traefik looks for ./plugins-local
