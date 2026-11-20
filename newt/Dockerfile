@@ -21,10 +21,6 @@ RUN ARCH=$(uname -m) && \
         curl -fsSL -o /usr/bin/newt https://github.com/fosrl/newt/releases/download/${NEWT_VERSION}/newt_linux_amd64; \
     elif [ "$ARCH" = "aarch64" ]; then \
         curl -fsSL -o /usr/bin/newt https://github.com/fosrl/newt/releases/download/${NEWT_VERSION}/newt_linux_arm64; \
-    elif [ "$ARCH" = "armv7l" ]; then \
-        curl -fsSL -o /usr/bin/newt https://github.com/fosrl/newt/releases/download/${NEWT_VERSION}/newt_linux_arm32; \
-    elif [ "$ARCH" = "armv6l" ]; then \
-        curl -fsSL -o /usr/bin/newt https://github.com/fosrl/newt/releases/download/${NEWT_VERSION}/newt_linux_arm32v6; \
     else \
         echo "ERROR: Unsupported architecture: $ARCH"; exit 1; \
     fi && \
