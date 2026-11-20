@@ -8,6 +8,9 @@ The letter & number are bug fix releases where said issue is not with Pangolin-C
 
 # Change Log
 
+## Pangolin-CLI 0.23.0.a
+* Removed deprecated architectures from deployment.
+
 ## Pangolin-CLI 0.23.0
 * Updated Pangolin-CLI from 0.21.0 to 0.23.0
 
