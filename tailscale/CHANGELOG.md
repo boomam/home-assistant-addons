@@ -10,6 +10,9 @@ The letter & number are bug fix releases where said issue is not with Tailscale,
 -----
 # Tailscale
 
+## Tailscale 1.104.7.b
+* Removed deprecated architectures from deployment.
+
 ## Tailscale 1.104.7.a
 * Updated base image from 21.0.5 to 21.0.11
 
