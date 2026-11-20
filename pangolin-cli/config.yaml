@@ -6,8 +6,6 @@ icon: "icon.png"
 arch:
   - amd64
   - aarch64
-  - armv7
-  - armhf
 startup: services
 boot: auto
 host_network: true
