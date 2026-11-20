@@ -41,8 +41,8 @@ check_plugins() {
 # Traefik downloads experimental.plugins from plugins.traefik.io on every start, and a failed
 # download disables them (traefik/traefik#13005). The add-on downloads them itself into
 # /data/plugins-local instead and skips a version already there, so a restart runs without the
-# registry. A version not on disk is never replaced by another one: fetch_plugin fails until it
-# can be downloaded, and use_local_plugins stops the app so the watchdog restarts it. Traefik runs with a copy of the
+# registry. A version not on disk is never replaced by another one: fetch_plugin fails once, and
+# use_local_plugins stops the app so the watchdog restarts it. Traefik runs with a copy of the
 # configuration that loads them as experimental.localPlugins, from ./plugins-local.
 fetch_plugin() {   # fetch_plugin <moduleName> <version>
   local dir="/data/plugins-local/src/$1" tmp root installed=1
@@ -67,13 +67,13 @@ fetch_plugin() {   # fetch_plugin <moduleName> <version>
 
 use_local_plugins() {   # use_local_plugins <static config file>; prints the file to run Traefik with
   local plugins name module version type=application/yaml
-  [[ "$1" == *.toml ]] && type=application/toml   # Traefik reads TOML too
+  [[ "${1,,}" == *.toml ]] && type=application/toml   # Traefik reads TOML too
   plugins=$(gomplate -f /etc/traefik/plugins-manifest.gotmpl -d "config=file://$1?type=${type}") || return 1
   if [[ -z "${plugins//[[:space:]]/}" ]]; then echo "$1"; return; fi
   while read -r name module version; do
     [[ -n "${name}" ]] || continue
-    if [[ "${module}" == *..* || "${module}" == /* ]]; then
-      bashio::log.error "Invalid plugin moduleName ${module}" >&2
+    if [[ -z "${module}" || -z "${version}" || "${module}" == . || "${module}" == *..* || "${module}" == /* ]]; then
+      bashio::log.error "Invalid plugin entry: moduleName '${module}', version '${version}'" >&2
       return 1
     fi
     if ! fetch_plugin "${module}" "${version}" >&2; then
