@@ -28,6 +28,10 @@ entryPoints:
         - "{{ . }}"
       {{- end }}
 {{- end }}
+{{- if and (has $options "metrics") $options.metrics }}
+  metrics:
+    address: ":8082"
+{{- end }}
 
 api:
   dashboard: true
@@ -74,3 +78,9 @@ accessLog: {}
 
 log:
   level: {{ strings.ToUpper $options.log_level }}
+{{- if and (has $options "metrics") $options.metrics }}
+
+metrics:
+  prometheus:
+    entryPoint: metrics
+{{- end }}

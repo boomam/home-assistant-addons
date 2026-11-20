@@ -1,4 +1,9 @@
 configuration:
+  metrics:
+    name: Prometheus metrics
+    description: >-
+      Serve Traefik's Prometheus metrics on the entrypoint "metrics" (container port 8082). Choose its
+      host port, or leave it unexposed, in the Network section below.
   custom_config:
     name: Custom Config
     description: >-
@@ -11,3 +16,8 @@ configuration:
   config_file:
     name: Configuration File Path
     description: Provide an absolute path to a configuration file (e.g., /config/traefik/traefik.yaml).
+network:
+  80/tcp: HTTP (entrypoint web)
+  443/tcp: HTTPS (entrypoint websecure)
+  8080/tcp: Traefik dashboard and API (entrypoint traefik); leave empty to keep it off the network
+  8082/tcp: Prometheus metrics (entrypoint metrics, when the metrics option is on)
