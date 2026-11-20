@@ -35,8 +35,6 @@ RUN set -eux; \
     case "${BUILD_ARCH}" in \
         amd64) ARCH=amd64 ;; \
         aarch64) ARCH=arm64 ;; \
-        armv7) ARCH=arm ;; \
-        i386) ARCH=386 ;; \
         *) echo "Unknown BUILD_ARCH: ${BUILD_ARCH}" && exit 1 ;; \
     esac; \
     # Download Tailscale tarball safely
