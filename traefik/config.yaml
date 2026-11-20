@@ -1,15 +1,12 @@
 # This file defines how things are displayed in HA, options that show, etc.
 name: Traefik
-version: 3.7.19.b
+version: 3.7.19.c
 slug: traefik
 description: |
   Traefik is a modern HTTP reverse proxy and load balancer that makes deploying microservices easy. 
 arch:
   - aarch64
   - amd64
-  - armhf
-  - armv7
-  - i386
 startup: system
 init: false
 stage: stable
