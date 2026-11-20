@@ -66,17 +66,22 @@ fetch_plugin() {   # fetch_plugin <moduleName> <version>
 }
 
 use_local_plugins() {   # use_local_plugins <static config file>; prints the file to run Traefik with
-  local plugins name module version
-  plugins=$(gomplate -f /etc/traefik/plugins-manifest.gotmpl -d "config=file://$1?type=application/yaml") || return 1
+  local plugins name module version type=application/yaml
+  [[ "$1" == *.toml ]] && type=application/toml   # Traefik reads TOML too
+  plugins=$(gomplate -f /etc/traefik/plugins-manifest.gotmpl -d "config=file://$1?type=${type}") || return 1
   if [[ -z "${plugins//[[:space:]]/}" ]]; then echo "$1"; return; fi
   while read -r name module version; do
     [[ -n "${name}" ]] || continue
+    if [[ "${module}" == *..* || "${module}" == /* ]]; then
+      bashio::log.error "Invalid plugin moduleName ${module}" >&2
+      return 1
+    fi
     until fetch_plugin "${module}" "${version}" >&2; do
       bashio::log.error "Cannot download plugin ${module} ${version} and it is not on disk; retrying in 30 seconds..." >&2
       sleep 30
     done
   done <<< "${plugins}"
-  gomplate -f /etc/traefik/plugins-local.gotmpl -d "config=file://$1?type=application/yaml" -o /tmp/traefik-static.yaml || return 1
+  gomplate -f /etc/traefik/plugins-local.gotmpl -d "config=file://$1?type=${type}" -o /tmp/traefik-static.yaml || return 1
   ln -sfn /data/plugins-local plugins-local || return 1   # Traefik looks for ./plugins-local
   echo /tmp/traefik-static.yaml
 }
