@@ -40,31 +40,29 @@ check_plugins() {
 
 # Traefik downloads experimental.plugins from plugins.traefik.io on every start, and a failed
 # download disables them (traefik/traefik#13005). The add-on downloads them itself into
-# /data/plugins-local instead, skips a version already there, keeps the copy on disk when the
-# registry is unreachable, and runs Traefik with a copy of the configuration that loads them as
-# experimental.localPlugins, from ./plugins-local.
+# /data/plugins-local instead and skips a version already there, so a restart runs without the
+# registry. A version not on disk is never replaced by another one: fetch_plugin fails until it
+# can be downloaded, and use_local_plugins retries. Traefik then runs with a copy of the
+# configuration that loads them as experimental.localPlugins, from ./plugins-local.
 fetch_plugin() {   # fetch_plugin <moduleName> <version>
-  local dir="/data/plugins-local/src/$1" tmp root
+  local dir="/data/plugins-local/src/$1" tmp root installed=1
   [[ "$(cat "${dir}/.plugin-version" 2>/dev/null)" == "$2" ]] && return 0
   tmp=$(mktemp -d)
   # Archives differ: one directory, or module-proxy paths (github.com/x/y@v1/). The plugin
   # root is the shallowest directory holding .traefik.yml.
   if curl -sfL --max-time 60 -o "${tmp}/plugin.zip" "https://plugins.traefik.io/public/download/$1/$2" \
       && unzip -q "${tmp}/plugin.zip" -d "${tmp}/x" \
-      && root=$(find "${tmp}/x" -name .traefik.yml | awk '{ print length, $0 }' | sort -n | head -1 | cut -d' ' -f2-) \
-      && [[ -n "${root}" ]]; then
-    rm -rf "${dir}"
-    mkdir -p "$(dirname "${dir}")"
-    mv "$(dirname "${root}")" "${dir}"
-    echo "$2" > "${dir}/.plugin-version"
-    bashio::log.info "Downloaded plugin $1 $2"
-  elif [[ -f "${dir}/.traefik.yml" ]]; then
-    bashio::log.warning "Cannot download plugin $1 $2; using $(cat "${dir}/.plugin-version" 2>/dev/null) from disk"
-  else
-    rm -rf "${tmp}"
-    return 1
+      && root=$(find "${tmp}/x" -name .traefik.yml | awk -F/ '{ print NF, $0 }' | sort -n -k1,1 | head -1 | cut -d' ' -f2-) \
+      && [[ -n "${root}" ]] \
+      && rm -rf "${dir}" \
+      && mkdir -p "$(dirname "${dir}")" \
+      && mv "$(dirname "${root}")" "${dir}" \
+      && echo "$2" > "${dir}/.plugin-version"; then
+    installed=0
   fi
   rm -rf "${tmp}"
+  if (( installed == 0 )); then bashio::log.info "Downloaded plugin $1 $2"; fi
+  return ${installed}
 }
 
 use_local_plugins() {   # use_local_plugins <static config file>; prints the file to run Traefik with
@@ -79,7 +77,7 @@ use_local_plugins() {   # use_local_plugins <static config file>; prints the fil
     done
   done <<< "${plugins}"
   gomplate -f /etc/traefik/plugins-local.gotmpl -d "config=file://$1?type=application/yaml" -o /tmp/traefik-static.yaml || return 1
-  ln -sfn /data/plugins-local plugins-local   # Traefik looks for ./plugins-local
+  ln -sfn /data/plugins-local plugins-local || return 1   # Traefik looks for ./plugins-local
   echo /tmp/traefik-static.yaml
 }
 
