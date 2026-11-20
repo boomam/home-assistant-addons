@@ -8,7 +8,7 @@ The letter & number are bug fix releases where said issue is not with Traefik, b
 
 # Change Log
 
-## Traefik 3.7.17.a
+## Traefik 3.7.19.a
 * The add-on now stops with an error when Traefik plugins fail to load, so the watchdog can restart it. See [traefik/traefik#13005](https://github.com/traefik/traefik/issues/13005).
 
 ## Traefik 3.7.17
