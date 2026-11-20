@@ -8,7 +8,7 @@ ARG TRAEFIK_VERSION
 RUN if [ "${BUILD_ARCH}" == "aarch64" ]; then BUILD_ARCH=arm64; \
     elif [ "${BUILD_ARCH}" == "amd64" ]; then BUILD_ARCH=amd64; \
     fi && \
-    apk add --no-cache nginx gomplate && \
+    apk add --no-cache nginx gomplate unzip && \
     TRAEFIK_ARTIFACT="traefik_v${TRAEFIK_VERSION}_linux_${BUILD_ARCH}.tar.gz" && \
     TRAEFIK_RELEASE_URL="https://github.com/traefik/traefik/releases/download/v${TRAEFIK_VERSION}" && \
     cd /tmp && \

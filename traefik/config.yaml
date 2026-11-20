@@ -1,6 +1,6 @@
 # This file defines how things are displayed in HA, options that show, etc.
 name: Traefik
-version: 3.7.19.c
+version: 3.7.19.d
 slug: traefik
 description: |
   Traefik is a modern HTTP reverse proxy and load balancer that makes deploying microservices easy. 
@@ -38,6 +38,7 @@ options:
   log_level: ERROR
   access_logs: false
   metrics: false
+  wait_for_plugin_registry: true
   forwarded_headers_insecure: false
   insecure_skip_verify: false
   dynamic_configuration_path: "/config/traefik/"
@@ -57,6 +58,7 @@ schema:
   log_level: list(TRACE|DEBUG|INFO|WARN|ERROR|FATAL|PANIC)
   access_logs: bool
   metrics: bool?
+  wait_for_plugin_registry: bool?
   forwarded_headers_insecure: bool
   insecure_skip_verify: bool
   proxy_protocol_trusted_ips:

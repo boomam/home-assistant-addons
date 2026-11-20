@@ -1,0 +1,7 @@
+{{- /* One "name moduleName version" line per entry of experimental.plugins in the static configuration. */ -}}
+{{- $config := ds "config" -}}
+{{- if and (has $config "experimental") (has $config.experimental "plugins") -}}
+{{- range $name, $plugin := $config.experimental.plugins }}
+{{ $name }} {{ $plugin.moduleName }} {{ $plugin.version }}
+{{- end -}}
+{{- end }}

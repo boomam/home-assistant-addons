@@ -8,6 +8,11 @@ The letter & number are bug fix releases where said issue is not with Traefik, b
 
 # Change Log
 
+## Traefik 3.7.19.d
+* With a custom config file, the add-on downloads the plugins in `experimental.plugins` itself, into `/data/plugins-local`, and runs Traefik with a copy of the configuration that loads them as `experimental.localPlugins`. A version already on disk is not downloaded again, so plugins keep working when DNS or the registry is down at startup. A version not on disk is never replaced by an older copy; if it cannot be downloaded the add-on stops with an error so the watchdog restarts it, after waiting for `plugins.traefik.io` unless the new `wait_for_plugin_registry` option is turned off. See [traefik/traefik#13005](https://github.com/traefik/traefik/issues/13005).
+* When a plugin still fails to load, the add-on removes the plugins on disk before stopping, so the watchdog restart downloads them again.
+* A TOML custom config is read as TOML for the plugin setup; a plugin entry with an empty or unsafe `moduleName` (containing `..` or starting with `/`) or an empty `version` makes the add-on refuse to start.
+
 ## Traefik 3.7.19.c
 * Removed deprecated architectures from deployment.
 

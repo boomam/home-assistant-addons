@@ -1,4 +1,8 @@
 configuration:
+  wait_for_plugin_registry:
+    name: Wait for the plugin registry before stopping
+    description: >-
+      When a custom config's plugins cannot be downloaded and are not on disk, wait until plugins.traefik.io is reachable before stopping the app, so the watchdog's restarts are not used up during an outage. Turn it off to stop the app at once.
   metrics:
     name: Prometheus metrics
     description: >-
