@@ -8,6 +8,10 @@ The letter & number are bug fix releases where said issue is not with Traefik, b
 
 # Change Log
 
+## Traefik 3.8.0
+* Updated Traefik from 3.7.19 to 3.8.0
+
+
 ## Traefik 3.7.19.c
 * Removed deprecated architectures from deployment.
 
